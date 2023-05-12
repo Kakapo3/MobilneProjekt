@@ -1,4 +1,4 @@
-package com.example.mobilneprojekt
+package com.example.mobilneprojekt.snake
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.mobilneprojekt.ui.theme.MobilneProjektTheme
 
-class MainActivity2 : ComponentActivity() {
+class SnakeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
