@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "785090661118",
+    "project_id": "projekt-mobilki-aa7ab",
+    "storage_bucket": "projekt-mobilki-aa7ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785090661118:android:08786140705cec69b073af",
+        "android_client_info": {
+          "package_name": "com.example.mobilneprojekt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785090661118-dc6k78138057n9fa0ifpf05htps050cv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCK5m00Ymwb8ZKW1ksDc9dm5IClu8J-ajc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785090661118-dc6k78138057n9fa0ifpf05htps050cv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
