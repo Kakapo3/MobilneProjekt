@@ -13,15 +13,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Star
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.mobilneprojekt.R
 
 @Composable
-fun Board(state: SnakeState, stateOpponent: SnakeState?) {
+fun Board(state: SnakeState, stateOpponent: SnakeState?, snakeViewModel: SnakeViewModel) {
     BoxWithConstraints(Modifier.padding(16.dp)) {
-        val tileSize = maxWidth / SnakeEngine.BOARD_SIZE
+        val tileSize = maxWidth / snakeViewModel.sizeOfBoard.collectAsState().value
         Box(
             Modifier
                 .size(maxWidth)

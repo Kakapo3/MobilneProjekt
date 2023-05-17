@@ -13,19 +13,33 @@ import kotlinx.coroutines.launch
 class SnakeViewModel(app: Application) : AndroidViewModel(app) {
     var snakeEngine: SnakeEngine? = null
     var speedSnake: MutableStateFlow<Long>
+    var sizeOfBoard: MutableStateFlow<Int>
     var id: MutableStateFlow<String> = MutableStateFlow("a")
 
 
     init{
-        getApplication<Application>().getSharedPreferences("settings-snake", Context.MODE_PRIVATE).apply {
+        var sharedPrefs = getApplication<Application>().getSharedPreferences("settings-snake", Context.MODE_PRIVATE)
+        sharedPrefs.apply {
             speedSnake = MutableStateFlow(getLong("speed", 200L))
+            sizeOfBoard = MutableStateFlow(getInt("size", 15))
         }
+
+
     }
 
     fun setSpeedSnake(){
         viewModelScope.launch {
             getApplication<Application>().getSharedPreferences("settings-snake", Context.MODE_PRIVATE).edit().apply {
                 putLong("speed", speedSnake.value)
+                apply()
+            }
+        }
+    }
+
+    fun setSizeOfBoard(){
+        viewModelScope.launch {
+            getApplication<Application>().getSharedPreferences("settings-snake", Context.MODE_PRIVATE).edit().apply {
+                putInt("size", sizeOfBoard.value)
                 apply()
             }
         }
