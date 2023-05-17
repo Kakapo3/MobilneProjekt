@@ -9,19 +9,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Star
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.mobilneprojekt.R
 
 @Composable
-fun Board(state: SnakeState) {
+fun Board(state: SnakeState, stateOpponent: SnakeState?) {
     BoxWithConstraints(Modifier.padding(16.dp)) {
         val tileSize = maxWidth / SnakeEngine.BOARD_SIZE
         Box(
             Modifier
-            .size(maxWidth)
-            .border(2.dp, Color.Gray))
+                .size(maxWidth)
+                .border(2.dp, Color.Gray))
         Box(
             Modifier
                 .offset(x = tileSize * state.food.first, y = tileSize * state.food.second)
@@ -29,7 +33,10 @@ fun Board(state: SnakeState) {
                 .background(
                     Color.DarkGray, CircleShape
                 )
-        )
+        ){
+            // show food icon
+            Icon(Icons.Sharp.Star, contentDescription = "star", tint = Color.Yellow)
+        }
         state.snake1.forEach {
             Box(
                 modifier = Modifier
@@ -39,6 +46,19 @@ fun Board(state: SnakeState) {
                         Color.DarkGray, RoundedCornerShape(4.dp)
                     )
             )
+        }
+        
+        stateOpponent?.let {
+            it.snake1.forEach { element ->
+                Box(
+                    modifier = Modifier
+                        .offset(x = tileSize * element.first, y = tileSize * element.second)
+                        .size(tileSize)
+                        .background(
+                            Color.Red, RoundedCornerShape(4.dp)
+                        )
+                )
+            }
         }
     }
 }
