@@ -22,6 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,5 +60,7 @@ fun SnakeMultiplayer(snakeViewModel: SnakeViewModel) {
 }
 
 fun startMultiplayerGame(snakeViewModel: SnakeViewModel) {
-
+    val firebase = Firebase.database
+    val myRef = firebase.getReference("snake").child("multiplayer").push()
+    val addGameToAccount = firebase.getReference("snake").child("accounts").child("game").setValue(myRef.key)
 }

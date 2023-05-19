@@ -58,7 +58,7 @@ fun SnakeSettings(snakeViewModel: SnakeViewModel, navController: NavController) 
             onValueChange = {snakeViewModel.sizeOfBoard.value = it.toInt()},
             valueRange = 10f..30f,
             steps = 18,
-            onValueChangeFinished = {snakeViewModel.setSpeedSnake()}
+            onValueChangeFinished = {snakeViewModel.setSizeOfBoard()}
         )
         Text(text = "${snakeViewModel.sizeOfBoard.collectAsState().value}")
         Spacer(modifier = Modifier.height(10.dp))
