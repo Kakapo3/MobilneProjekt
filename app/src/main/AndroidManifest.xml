@@ -15,6 +15,11 @@
         android:theme="@style/Theme.MobilneProjekt"
         tools:targetApi="31">
         <activity
+            android:name=".test.MainActivity"
+            android:exported="false"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.MobilneProjekt" />
+        <activity
             android:name=".snake.SnakeActivity"
             android:exported="false"
             android:label="SnakeActivity"
