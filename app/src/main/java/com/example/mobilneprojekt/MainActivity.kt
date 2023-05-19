@@ -3,11 +3,13 @@ package com.example.mobilneprojekt
 import android.annotation.SuppressLint
 import android.icu.text.CaseMap.Title
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -120,7 +123,8 @@ fun MakeGameRow(title: String) {
 }
 
 @Composable
-fun MakeGameColumn(imgSrc : Int, title: String, desc: String) {
+fun MakeGameColumn(imgSrc : Int, title: String) {
+    val context = LocalContext.current
     Column() {
         Image(
             painter = painterResource(id = R.drawable.game_icon_temp),
@@ -134,11 +138,31 @@ fun MakeGameColumn(imgSrc : Int, title: String, desc: String) {
             fontSize = 60.sp
         )
 
-        Text(
-            text = desc,
-            textAlign = TextAlign.Center,
-            fontSize = 30.sp
-        )
+        Row() {
+            Image(
+                painter = painterResource(id = R.drawable.game_icon_temp),
+                contentDescription = "Temp icon - change it when you deploy a game",
+                Modifier.size(80.dp).padding(10.dp).clickable {
+                    Toast.makeText(context, "Achievement 1", Toast.LENGTH_SHORT).show()
+                }
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.game_icon_temp),
+                contentDescription = "Temp icon - change it when you deploy a game",
+                Modifier.size(80.dp).padding(10.dp).clickable {
+                    Toast.makeText(context, "Achievement 2", Toast.LENGTH_SHORT).show()
+                }
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.game_icon_temp),
+                contentDescription = "Temp icon - change it when you deploy a game",
+                Modifier.size(80.dp).padding(10.dp).clickable {
+                    Toast.makeText(context, "Achievement 3", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
     }
 }
 
@@ -146,7 +170,7 @@ fun MakeGameColumn(imgSrc : Int, title: String, desc: String) {
 @ExperimentalFoundationApi
 fun GameScroll() {
     HorizontalPager(pageCount = 3) { page ->
-        MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page", desc = "Game $page description")
+        MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page")
     }
 }
 
