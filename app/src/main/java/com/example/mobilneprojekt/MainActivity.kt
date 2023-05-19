@@ -1,6 +1,8 @@
 package com.example.mobilneprojekt
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.icu.text.CaseMap.Title
 import android.os.Bundle
 import android.widget.Toast
@@ -45,9 +47,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobilneprojekt.minesweeper.MinesweeperActivity
 import com.example.mobilneprojekt.theme.MobilneProjektTheme
 
 class MainActivity : ComponentActivity() {
@@ -123,13 +127,15 @@ fun MakeGameRow(title: String) {
 }
 
 @Composable
-fun MakeGameColumn(imgSrc : Int, title: String) {
+fun MakeGameColumn(imgSrc : Int, title: String, link : Activity) {
     val context = LocalContext.current
     Column() {
         Image(
             painter = painterResource(id = R.drawable.game_icon_temp),
             contentDescription = "Temp icon - change it when you deploy a game",
-            Modifier.size(250.dp)
+            Modifier.size(250.dp).clickable {
+                context.startActivity(Intent(context, MinesweeperActivity::class.java))
+            }
         )
 
         Text(
@@ -170,7 +176,7 @@ fun MakeGameColumn(imgSrc : Int, title: String) {
 @ExperimentalFoundationApi
 fun GameScroll() {
     HorizontalPager(pageCount = 3) { page ->
-        MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page")
+        MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page", MinesweeperActivity())
     }
 }
 

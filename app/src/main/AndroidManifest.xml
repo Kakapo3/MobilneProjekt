@@ -20,6 +20,11 @@
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.MobilneProjekt" />
         <activity
+            android:name=".minesweeper.MinesweeperActivity"
+            android:exported="false"
+            android:label="SnakeActivity"
+            android:theme="@style/Theme.MobilneProjekt" />
+        <activity
             android:name=".snake.SnakeActivity"
             android:exported="false"
             android:label="SnakeActivity"
