@@ -53,10 +53,6 @@ class SnakeActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startActivity(Intent(
-            this,
-            SnakeActivity::class.java
-        ))
 
         setContent {
             SnakeMobilneProjektTheme(
@@ -111,12 +107,12 @@ class SnakeActivity : ComponentActivity() {
                                         onSingleplayerClick = {
 
                                             myViewModel.snakeEngine = SnakeEngine(
-                                                scope = lifecycleScope,
                                                 onGameEnded = {(a,b) -> if(a || b) {navController.navigate("menu"); true} else false},
                                                 onFoodEaten = { Logger.getLogger("SnakeActivity").warning("Food eaten")},
                                                 hostingPlayerId = "a",
                                                 player1Id = "a",
-                                                snakeViewModel = myViewModel
+                                                snakeViewModel = myViewModel,
+                                                onError = {Logger.getLogger("SnakeMultiplayer").warning("Opponent died"); navController.navigateUp()},
                                             )
                                             navController.navigate("game")
                                             },
@@ -145,6 +141,10 @@ class SnakeActivity : ComponentActivity() {
     @Composable
     fun SnakeGame() {
         scope = rememberCoroutineScope()
+        LaunchedEffect(key1 = true){
+            myViewModel.snakeEngine!!.scope = scope
+            myViewModel.snakeEngine!!.runGame()
+        }
         val state = myViewModel.snakeEngine!!.mutableStateExposed.collectAsState()
         val stateOpponent = myViewModel.snakeEngine!!.mutableStateOpponentExposed?.collectAsState()
         Column(

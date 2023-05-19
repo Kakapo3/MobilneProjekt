@@ -17,10 +17,10 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.random.Random
 
 class SnakeEngine(
-    val scope: CoroutineScope,
     val snakeViewModel: SnakeViewModel,
     private val onGameEnded: (Pair<Boolean,Boolean>) -> Boolean,
     private val onFoodEaten: (Boolean) -> Unit,
+    private val onError: (String) -> Unit,
     private val hostingPlayerId: String,
     private val player1Id: String,
     private val player2Id: String? = null,
@@ -28,6 +28,7 @@ class SnakeEngine(
     val boardSize: Int = snakeViewModel.sizeOfBoard.value,
     val delay: Long = snakeViewModel.speedSnake.value
 ) {
+    var scope: CoroutineScope? = null
     private val loose = Pair(false, false)
     private val currentDirection = mutableStateOf(Direction.RIGHT)
     private val opponentReady = if (myGameRef != null) mutableStateOf(false) else mutableStateOf(true)
@@ -56,7 +57,7 @@ class SnakeEngine(
 
     var move = Pair(1,0)
         set(value) {
-            scope.launch {
+            scope?.launch {
                 mutex.withLock{
                     field = value
                 }
@@ -66,6 +67,11 @@ class SnakeEngine(
     init {
         myGameRef?.child(player2Id!!)?.child("gameReady")?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                val value = snapshot.value
+                if (value == null) {
+                    opponentReady.value = false
+                    return
+                }
                 opponentReady.value = snapshot.value as Boolean
             }
 
@@ -130,13 +136,13 @@ class SnakeEngine(
     }
 
     fun runGame() {
-        scope.launch {
+        scope?.launch {
             var snakeLength = 2
             var score = 0
 
 
             myGameRef?.child(player1Id)?.child("gameReady")?.setValue(true)
-            myGameRef?.child(player1Id)?.child("data")?.setValue(mutableState)
+            myGameRef?.child(player1Id)?.child("data")?.setValue(mutableState.value)
             Log.i("Snake", "Game started")
             currentTimeMillis = SystemClock.uptimeMillis()
             while (!gameEnded) {
@@ -198,6 +204,10 @@ class SnakeEngine(
                         updateStates()
                     }
                     Log.i("Snake", "Game essa")
+                }
+                if ((SystemClock.uptimeMillis() - currentTimeMillis >= 20 * delay && !opponentReady.value)){
+                    onError.invoke("Opponent left the game")
+                    gameEnded = true
                 }
                 delay(10)
             }

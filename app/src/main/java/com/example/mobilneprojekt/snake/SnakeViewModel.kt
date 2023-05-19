@@ -46,6 +46,6 @@ class SnakeViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     override fun onCleared() {
-        snakeEngine!!.scope.coroutineContext.cancelChildren()
+        snakeEngine!!.scope?.coroutineContext?.cancelChildren()
     }
 }

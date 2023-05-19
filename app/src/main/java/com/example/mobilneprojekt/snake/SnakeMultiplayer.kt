@@ -21,12 +21,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.lang.Thread.sleep
 import java.util.logging.Logger
+import java.net.URL
+import kotlin.concurrent.thread
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,11 +64,9 @@ fun SnakeMultiplayer(snakeViewModel: SnakeViewModel, navController: NavControlle
         val text = remember {
             mutableStateOf("Czekam...")
         }
-        Row{
-            snakeButton(onClick = { hostMultiplayerGame(snakeViewModel, idState.value, navController, text) }, text = "Start host")
-            Spacer(modifier = Modifier.width(10.dp))
-            snakeButton(onClick = { connectToMultiplayerGame(snakeViewModel, idState.value, navController, text) }, text = "Connect")
-        }
+        snakeButton(onClick = { hostMultiplayerGame(snakeViewModel, idState.value, navController, text) }, text = "Start host")
+        Spacer(modifier = Modifier.width(10.dp))
+        snakeButton(onClick = { connectToMultiplayerGame(snakeViewModel, idState.value, navController, text) }, text = "Connect")
         Spacer(modifier = Modifier.height(5.dp))
         Text(text = text.value,
             style = MaterialTheme.typography.bodyLarge)
@@ -80,27 +84,37 @@ fun hostMultiplayerGame(
     navController: NavController,
     text: MutableState<String>
 ) {
-    val firebase = Firebase.database
+    val firebase = FirebaseDatabase.getInstance("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
+    Logger.getLogger("SnakeMultiplayer").warning("hostMultiplayerGame")
+    firebase.getReference("snake").setValue("snake")
     val myRef = firebase.getReference("snake").child("multiplayer").push()
-    val addGameToAccount =
-        myRef.key?.let { firebase.getReference("snake").child("accounts").child(snakeViewModel.id.toString()).child(it) }
+    Logger.getLogger("SnakeMultiplayer").warning("myRef.key: ${myRef.key}")
+    Logger.getLogger("SnakeMultiplayer").warning(".key: ${myRef.key}")
+    val addGameToAccount = myRef.key?.let { firebase.getReference("snake").child("accounts").child(snakeViewModel.id.value).child(it) }
+    Logger.getLogger("SnakeMultiplayer").warning("addGameToAccount: ${addGameToAccount.toString()}")
     addGameToAccount?.child("gameId")?.setValue(myRef.key)
     addGameToAccount?.child("sizeOfBoard")?.setValue(snakeViewModel.sizeOfBoard.value)
     addGameToAccount?.child("speedSnake")?.setValue(snakeViewModel.speedSnake.value)
     addGameToAccount?.child("secondPlayerId")?.setValue("0")
+    var reading = false
     addGameToAccount?.child("secondPlayerId")?.addValueEventListener(object : ValueEventListener{
         override fun onDataChange(snapshot: DataSnapshot) {
+            if (!reading) {
+                reading = true
+                return
+            }
+            Logger.getLogger("SnakeMultiplayer").warning("Start game")
             snakeViewModel.snakeEngine = SnakeEngine(
-                snakeViewModel.viewModelScope,
                 snakeViewModel,
                 {(a,b) -> if (a || b) {navController.navigateUp(); true} else false},
                 {Logger.getLogger("SnakeMultiplayer").warning("Eated food")},
+                {Logger.getLogger("SnakeMultiplayer").warning("Opponent died"); navController.navigateUp()},
                 snakeViewModel.id.value,
                 opponentId,
                 snapshot.value.toString(),
                 myRef
             )
-                    navController.navigate("game")
+            navController.navigate("game")
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -108,6 +122,7 @@ fun hostMultiplayerGame(
         }
 
     })
+
     text.value = "Czekam na gracza"
 }
 
@@ -117,38 +132,45 @@ fun connectToMultiplayerGame(
     navController: NavController,
     text: MutableState<String>
 ) {
-    val firebase = Firebase.database
-    firebase.getReference("snake").child("accounts").child(opponentId).get().result.children.forEach {
-        if (it.key == "gameId") {
-            val gameId = it.value.toString()
-            val ref = firebase.getReference("snake").child("accounts").child(gameId).child(gameId)
-            val boardSize = ref.child("sizeOfBoard").get().result.value as Int
-            val speedSnake = ref.child("speedSnake").get().result.value as Long
-            ref.child("secondPlayerId").addValueEventListener(object : ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    snakeViewModel.snakeEngine = SnakeEngine(
-                        snakeViewModel.viewModelScope,
-                        snakeViewModel,
-                        {(a,b) -> if (a || b) {true} else false},
-                        {Logger.getLogger("SnakeMultiplayer").warning("Eated food")},
-                        opponentId,
-                        snakeViewModel.id.value,
-                        opponentId,
-                        firebase.getReference("snake").child("multiplayer").child(gameId),
-                        boardSize,
-                        speedSnake
-                    )
-                    navController.navigate("game")
+    thread {
+        val firebase = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
+        val task = firebase.getReference("snake").child("accounts").child(opponentId).get()
+        val result = Tasks.await(task)
+        Logger.getLogger("SnakeMultiplayer").warning("result: ${result.value.toString()}")
+        val game = result.children.first()
+        Logger.getLogger("SnakeMultiplayer").warning("it.key: ")
+        val gameId = game.key!!
+        Logger.getLogger("SnakeMultiplayer").warning("gameId: $gameId")
+        val ref = firebase.getReference("snake").child("accounts").child(opponentId).child(gameId)
+        val boardSizeTask = ref.child("sizeOfBoard").get()
+        val boardSize = (Tasks.await(boardSizeTask).value as Long).toInt()
+        val speedSnakeTask = ref.child("speedSnake").get()
+        val speedSnake = Tasks.await(speedSnakeTask).value as Long
+        Logger.getLogger("SnakeMultiplayer").warning("boardSize: $boardSize")
+        Logger.getLogger("SnakeMultiplayer").warning("speedSnake: $speedSnake")
+        ref.child("secondPlayerId").addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snakeViewModel.snakeEngine = SnakeEngine(
+                    snakeViewModel,
+                    {(a,b) -> if (a || b) {navController.navigateUp(); true} else false},
+                    {Logger.getLogger("SnakeMultiplayer").warning("Eated food")},
+                    {Logger.getLogger("SnakeMultiplayer").warning("Opponent died"); navController.navigateUp()},
+                    opponentId,
+                    snakeViewModel.id.value,
+                    opponentId,
+                    firebase.getReference("snake").child("multiplayer").child(gameId),
+                    boardSize,
+                    speedSnake
+                )
+                navController.navigate("game")
+            }
 
-                }
+            override fun onCancelled(error: DatabaseError) {
+                Logger.getLogger("SnakeMultiplayer").warning("Error in connectToMultiplayerGame")
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Logger.getLogger("SnakeMultiplayer").warning("Error in connectToMultiplayerGame")
-                }
-
-            })
-            ref.child("secondPlayerId").setValue(snakeViewModel.id.value)
-        }
+        })
+        ref.child("secondPlayerId").setValue(snakeViewModel.id.value)
     }
 
 }

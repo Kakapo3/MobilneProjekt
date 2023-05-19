@@ -60,132 +60,148 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
 
-@Composable
-fun MakeTitle(title: String) {
-    Text(
-        text = title,
-        textAlign = TextAlign.Center,
-        fontSize = 50.sp
-    )
-}
-
-
-
-@Composable
-fun MakeGameColumn(imgSrc: Int, title: String) {
-    Column() {
-        Image(
-            painter = painterResource(id = R.drawable.game_icon_temp),
-            contentDescription = "Temp icon - change it when you deploy a game",
-            Modifier.size(250.dp)
-        )
-
+    @Composable
+    fun MakeTitle(title: String) {
         Text(
             text = title,
             textAlign = TextAlign.Center,
-            fontSize = 60.sp
+            fontSize = 50.sp
         )
-        val context = LocalContext.current as Activity
-        Button(onClick = {context.startActivity(
-            Intent(
-                context,
-                SnakeActivity::class.java
+    }
+
+
+    @Composable
+    fun MakeGameColumn(imgSrc: Int, title: String) {
+        Column() {
+            Image(
+                painter = painterResource(id = R.drawable.game_icon_temp),
+                contentDescription = "Temp icon - change it when you deploy a game",
+                Modifier.size(250.dp)
             )
-        )}) {
-            Text(text = "Play")
+
+            Text(
+                text = title,
+                textAlign = TextAlign.Center,
+                fontSize = 60.sp
+            )
+            val context = LocalContext.current as Activity
+            Button(onClick = {
+                startActivity(
+                    Intent(
+                        context,
+                        SnakeActivity::class.java
+                    )
+                )
+            }) {
+                Text(text = "Play")
+            }
         }
     }
-}
 
-@Composable
-@ExperimentalFoundationApi
-fun GameScroll() {
-    HorizontalPager(pageCount = 3) { page ->
-        MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page")
+    @Composable
+    @ExperimentalFoundationApi
+    fun GameScroll() {
+        HorizontalPager(pageCount = 3) { page ->
+            MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page")
+        }
     }
-}
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun MainMenu() {
-    // Tutaj możemy tworzyć właściwy interfejs głównego menu
-    GameScroll()
-}
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    fun MainMenu() {
+        // Tutaj możemy tworzyć właściwy interfejs głównego menu
+        GameScroll()
+    }
 
-@Composable
-fun FriendsList(){
-    // A tutaj możemy tworzyć interfejs listy znajomych
-    Text(text = "Friends list")
-}
-
+    @Composable
+    fun FriendsList() {
+        // A tutaj możemy tworzyć interfejs listy znajomych
+        Text(text = "Friends list")
+    }
 
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainMenuScaffold() {
-    val navController = rememberNavController()
-    Scaffold(
-        topBar = { TopAppBar(
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun MainMenuScaffold() {
+        val navController = rememberNavController()
+        Scaffold(
+            topBar = {
+                TopAppBar(
 //            colors = TopAppBarDefaults.mediumTopAppBarColors(
 //                containerColor = com.example.mobilneprojekt.theme.Purple80,
 //            ),
-            title = { Text(text = "Game hub", style = com.example.mobilneprojekt.theme.Typography.headlineMedium) }
-        )},
-        bottomBar = { NavigationBar {
-            // Tworzymy dolny pasek nawigacji
-            // selectedItem to stan, który będzie przechowywał informację o tym, który element jest zaznaczony
-            val selectedItem = remember{ mutableStateOf(0) }
+                    title = {
+                        Text(
+                            text = "Game hub",
+                            style = com.example.mobilneprojekt.theme.Typography.headlineMedium
+                        )
+                    }
+                )
+            },
+            bottomBar = {
+                NavigationBar {
+                    // Tworzymy dolny pasek nawigacji
+                    // selectedItem to stan, który będzie przechowywał informację o tym, który element jest zaznaczony
+                    val selectedItem = remember { mutableStateOf(0) }
 
-            NavigationBarItem(
-                selected = selectedItem.value == 0,
-                onClick = {
-                    selectedItem.value = 0
-                    navController.navigate("mainMenu")
-                },
-                label = { Text("Main menu") },
-                icon = { Icon(imageVector  = Icons.Rounded.Home, contentDescription = "Home") }
-            )
+                    NavigationBarItem(
+                        selected = selectedItem.value == 0,
+                        onClick = {
+                            selectedItem.value = 0
+                            navController.navigate("mainMenu")
+                        },
+                        label = { Text("Main menu") },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Home,
+                                contentDescription = "Home"
+                            )
+                        }
+                    )
 
-            NavigationBarItem(
-                selected = selectedItem.value == 1,
-                onClick = {
-                    selectedItem.value = 1
-                    navController.navigate("friends")
-                },
-                label = { Text("Friends") },
-                icon = { Icon(imageVector  = Icons.Rounded.Face, contentDescription = "Home") }
-            )
+                    NavigationBarItem(
+                        selected = selectedItem.value == 1,
+                        onClick = {
+                            selectedItem.value = 1
+                            navController.navigate("friends")
+                        },
+                        label = { Text("Friends") },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Face,
+                                contentDescription = "Home"
+                            )
+                        }
+                    )
+
+                }
+
 
             }
-
-
-        }
-    // W Kotlinie ostatni parametr jako funkcja może być wyciągnięta poza nawiasy
-    // Tutaj to jest paramter content
-    ){ innerPadding ->
-        // Tutaj jest kontent
-        // Przekazywany padding jest po to, żeby nie nakładać elementów na siebie
-        // Wpakowujemy nasz własny content do boxa, żeby nie nakładać elementów na siebie
-        // i dajemy mu padding
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ){
-            //Nasz navhost odpowiada za to, żeby się zmieniały ekrany
-            //jak wyywołujemy funkcję navController.navigate("nazwa ekranu"), to zmieniamy ekran
-            NavHost(navController = navController, startDestination = "mainMenu") {
-                composable("mainMenu") { MainMenu()}
-                composable("friends") { FriendsList() }
+            // W Kotlinie ostatni parametr jako funkcja może być wyciągnięta poza nawiasy
+            // Tutaj to jest paramter content
+        ) { innerPadding ->
+            // Tutaj jest kontent
+            // Przekazywany padding jest po to, żeby nie nakładać elementów na siebie
+            // Wpakowujemy nasz własny content do boxa, żeby nie nakładać elementów na siebie
+            // i dajemy mu padding
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                //Nasz navhost odpowiada za to, żeby się zmieniały ekrany
+                //jak wyywołujemy funkcję navController.navigate("nazwa ekranu"), to zmieniamy ekran
+                NavHost(navController = navController, startDestination = "mainMenu") {
+                    composable("mainMenu") { MainMenu() }
+                    composable("friends") { FriendsList() }
+                }
             }
         }
     }
 }
-
 // Można też ten duży plik podzielić na mniejsze, żeby było czytelniej
 
 
