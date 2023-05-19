@@ -41,10 +41,9 @@ import androidx.compose.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material3.TopAppBarColors
 import com.example.mobilneprojekt.ui.theme.MobilneProjektTheme
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
 import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
@@ -133,11 +132,10 @@ fun MakeGameColumn(imgSrc : Int, title: String) {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 @ExperimentalFoundationApi
 fun GameScroll() {
-    HorizontalPager(count = 3) { page ->
+    HorizontalPager(pageCount = 3) { page ->
         MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page")
     }
 }
