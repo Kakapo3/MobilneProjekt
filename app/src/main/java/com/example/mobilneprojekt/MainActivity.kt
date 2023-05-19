@@ -120,7 +120,7 @@ fun MakeGameRow(title: String) {
 }
 
 @Composable
-fun MakeGameColumn(imgSrc : Int, title: String) {
+fun MakeGameColumn(imgSrc : Int, title: String, desc: String) {
     Column() {
         Image(
             painter = painterResource(id = R.drawable.game_icon_temp),
@@ -133,6 +133,12 @@ fun MakeGameColumn(imgSrc : Int, title: String) {
             textAlign = TextAlign.Center,
             fontSize = 60.sp
         )
+
+        Text(
+            text = desc,
+            textAlign = TextAlign.Center,
+            fontSize = 30.sp
+        )
     }
 }
 
@@ -140,7 +146,7 @@ fun MakeGameColumn(imgSrc : Int, title: String) {
 @ExperimentalFoundationApi
 fun GameScroll() {
     HorizontalPager(pageCount = 3) { page ->
-        MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page")
+        MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page", desc = "Game $page description")
     }
 }
 
