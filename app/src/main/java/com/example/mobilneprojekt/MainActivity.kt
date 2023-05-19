@@ -1,7 +1,7 @@
 package com.example.mobilneprojekt
 
-import android.annotation.SuppressLint
-import android.icu.text.CaseMap.Title
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,7 +11,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,13 +29,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,11 +43,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobilneprojekt.snake.SnakeActivity
 import com.example.mobilneprojekt.theme.MobilneProjektTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MobilneProjektTheme(
                 dynamicColor = true,
@@ -62,32 +62,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun OldMenu() {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(40.dp)) {
-
-            MakeTitle(
-                title = "App title",
-            )
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                item {
-                    MakeGameRow(title = "Game 1")
-                    MakeGameRow(title = "Game 2")
-                    MakeGameRow(title = "Game 3")
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun MakeTitle(title: String) {
@@ -98,29 +72,10 @@ fun MakeTitle(title: String) {
     )
 }
 
-@Composable
-fun MakeGameRow(title: String) {
-    Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-        Image(
-            painter = painterResource(id = R.drawable.game_icon_temp),
-            contentDescription = "Temp icon - change it when you deploy a game",
-            Modifier.size(50.dp)
-        )
 
-        Text(
-            text = title,
-            textAlign = TextAlign.Center,
-            fontSize = 40.sp
-        )
-
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "Play!")
-        }
-    }
-}
 
 @Composable
-fun MakeGameColumn(imgSrc : Int, title: String) {
+fun MakeGameColumn(imgSrc: Int, title: String) {
     Column() {
         Image(
             painter = painterResource(id = R.drawable.game_icon_temp),
@@ -133,6 +88,15 @@ fun MakeGameColumn(imgSrc : Int, title: String) {
             textAlign = TextAlign.Center,
             fontSize = 60.sp
         )
+        val context = LocalContext.current as Activity
+        Button(onClick = {context.startActivity(
+            Intent(
+                context,
+                SnakeActivity::class.java
+            )
+        )}) {
+            Text(text = "Play")
+        }
     }
 }
 
@@ -146,7 +110,7 @@ fun GameScroll() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainMenu(){
+fun MainMenu() {
     // Tutaj możemy tworzyć właściwy interfejs głównego menu
     GameScroll()
 }
@@ -162,7 +126,7 @@ fun FriendsList(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainMenuScaffold () {
+fun MainMenuScaffold() {
     val navController = rememberNavController()
     Scaffold(
         topBar = { TopAppBar(
@@ -225,8 +189,3 @@ fun MainMenuScaffold () {
 // Można też ten duży plik podzielić na mniejsze, żeby było czytelniej
 
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MainMenuScaffold()
-}

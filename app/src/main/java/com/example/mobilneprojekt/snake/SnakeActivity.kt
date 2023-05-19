@@ -2,6 +2,7 @@ package com.example.mobilneprojekt.snake
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
@@ -52,6 +53,10 @@ class SnakeActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startActivity(Intent(
+            this,
+            SnakeActivity::class.java
+        ))
 
         setContent {
             SnakeMobilneProjektTheme(
@@ -123,7 +128,7 @@ class SnakeActivity : ComponentActivity() {
                                     SnakeGame()
                                 }
                                 composable("multiplayer") {
-                                    SnakeMultiplayer(myViewModel)
+                                    SnakeMultiplayer(myViewModel, navController)
                                 }
                                 composable("settings") {
                                     SnakeSettings(myViewModel, navController)
@@ -142,7 +147,9 @@ class SnakeActivity : ComponentActivity() {
         scope = rememberCoroutineScope()
         val state = myViewModel.snakeEngine!!.mutableStateExposed.collectAsState()
         val stateOpponent = myViewModel.snakeEngine!!.mutableStateOpponentExposed?.collectAsState()
-        Column {
+        Column(
+            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+        ) {
             Board(state.value, stateOpponent?.value, myViewModel)
             Controller {
                 when (it) {

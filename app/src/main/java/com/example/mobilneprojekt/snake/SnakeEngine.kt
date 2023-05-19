@@ -25,15 +25,14 @@ class SnakeEngine(
     private val player1Id: String,
     private val player2Id: String? = null,
     private val myGameRef: DatabaseReference? = null,
+    val boardSize: Int = snakeViewModel.sizeOfBoard.value,
+    val delay: Long = snakeViewModel.speedSnake.value
 ) {
     private val loose = Pair(false, false)
     private val currentDirection = mutableStateOf(Direction.RIGHT)
     private val opponentReady = if (myGameRef != null) mutableStateOf(false) else mutableStateOf(true)
     private var gameEnded = false
     private var currentTimeMillis = SystemClock.uptimeMillis()
-
-    val boardSize = snakeViewModel.sizeOfBoard.value
-    val delay = snakeViewModel.speedSnake.value
 
     private val mutex = Mutex()
     private val mutableState = MutableStateFlow(
