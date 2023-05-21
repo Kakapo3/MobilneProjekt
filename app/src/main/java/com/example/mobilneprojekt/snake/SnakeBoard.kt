@@ -24,14 +24,14 @@ import com.example.mobilneprojekt.R
 @Composable
 fun Board(state: SnakeState, stateOpponent: SnakeState?, snakeViewModel: SnakeViewModel) {
     BoxWithConstraints(Modifier.padding(16.dp)) {
-        val tileSize = maxWidth / snakeViewModel.sizeOfBoard.collectAsState().value
+        val tileSize = maxWidth / snakeViewModel.currentSizeBoard.collectAsState().value
         Box(
             Modifier
                 .size(maxWidth)
                 .border(2.dp, Color.Gray))
         Box(
             Modifier
-                .offset(x = tileSize * state.food.first, y = tileSize * state.food.second)
+                .offset(x = tileSize * state.food[0], y = tileSize * state.food[1])
                 .size(tileSize)
                 .background(
                     Color.DarkGray, CircleShape
@@ -43,7 +43,7 @@ fun Board(state: SnakeState, stateOpponent: SnakeState?, snakeViewModel: SnakeVi
         state.snake1.forEach {
             Box(
                 modifier = Modifier
-                    .offset(x = tileSize * it.first, y = tileSize * it.second)
+                    .offset(x = tileSize * it[0], y = tileSize * it[1])
                     .size(tileSize)
                     .background(
                         Color.DarkGray, RoundedCornerShape(4.dp)
@@ -55,7 +55,7 @@ fun Board(state: SnakeState, stateOpponent: SnakeState?, snakeViewModel: SnakeVi
             it.snake1.forEach { element ->
                 Box(
                     modifier = Modifier
-                        .offset(x = tileSize * element.first, y = tileSize * element.second)
+                        .offset(x = tileSize * element[0], y = tileSize * element[1])
                         .size(tileSize)
                         .background(
                             Color.Red, RoundedCornerShape(4.dp)

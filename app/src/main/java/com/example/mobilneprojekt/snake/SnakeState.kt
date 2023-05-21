@@ -9,9 +9,9 @@ object Direction {
 
 @Serializable
 data class SnakeState(
-    val snake1: List<Pair<Int, Int>>,
-    val food: Pair<Int, Int>,
-    val direction: Int,
-    val isGameOver: Boolean,
-    val score: Int
+    var snake1: List<List<Int>> = listOf(),
+    var food: List<Int> = Pair(0, 0).toList(),
+    var direction: Int = Direction.RIGHT,
+    var isGameOver: Boolean = false,
+    var score: Int = 0
 )

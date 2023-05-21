@@ -2,7 +2,6 @@ package com.example.mobilneprojekt.snake
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
@@ -37,13 +36,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mobilneprojekt.snake.theme.SnakeMobilneProjektTheme
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.logging.Logger
 
 class SnakeActivity : ComponentActivity() {
@@ -53,6 +53,7 @@ class SnakeActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseMessaging.getInstance().subscribeToTopic("/snake/${myViewModel.id.value}")
 
         setContent {
             SnakeMobilneProjektTheme(
@@ -107,6 +108,22 @@ class SnakeActivity : ComponentActivity() {
                                         onSingleplayerClick = {
 
                                             myViewModel.snakeEngine = SnakeEngine(
+                                                mutableState = MutableStateFlow(
+                                                    SnakeState(
+                                                        snake1 = listOf(listOf(5,5)),
+                                                        food = Pair(8, 8).toList(),
+                                                        direction = Direction.RIGHT,
+                                                        isGameOver = false,
+                                                        score = 0
+                                                    )),
+                                                mutableStateOpponent = MutableStateFlow(
+                                                    SnakeState(
+                                                        snake1 = listOf(listOf(1,1)),
+                                                        food = Pair(8, 8).toList(),
+                                                        direction = Direction.RIGHT,
+                                                        isGameOver = false,
+                                                        score = 0
+                                                    )),
                                                 onGameEnded = {(a,b) -> if(a || b) {navController.navigate("menu"); true} else false},
                                                 onFoodEaten = { Logger.getLogger("SnakeActivity").warning("Food eaten")},
                                                 hostingPlayerId = "a",
@@ -146,17 +163,17 @@ class SnakeActivity : ComponentActivity() {
             myViewModel.snakeEngine!!.runGame()
         }
         val state = myViewModel.snakeEngine!!.mutableStateExposed.collectAsState()
-        val stateOpponent = myViewModel.snakeEngine!!.mutableStateOpponentExposed?.collectAsState()
+        val stateOpponent = if(myViewModel.snakeEngine!!.player2Id != null) myViewModel.snakeEngine!!.mutableStateOpponentExposed.collectAsState() else null
         Column(
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         ) {
             Board(state.value, stateOpponent?.value, myViewModel)
             Controller {
                 when (it) {
-                    Direction.UP -> myViewModel.snakeEngine!!.move = Pair(0, -1)
-                    Direction.LEFT -> myViewModel.snakeEngine!!.move = Pair(-1, 0)
-                    Direction.RIGHT -> myViewModel.snakeEngine!!.move = Pair(1, 0)
-                    Direction.DOWN -> myViewModel.snakeEngine!!.move = Pair(0, 1)
+                    Direction.UP -> {myViewModel.snakeEngine!!.move = Pair(0, -1); Log.i("SnakeActivity", "UP")}
+                    Direction.LEFT -> {myViewModel.snakeEngine!!.move = Pair(-1, 0); Log.i("SnakeActivity", "LEFT")}
+                    Direction.RIGHT -> {myViewModel.snakeEngine!!.move = Pair(1, 0); Log.i("SnakeActivity", "RIGHT")}
+                    Direction.DOWN -> {myViewModel.snakeEngine!!.move = Pair(0, 1); Log.i("SnakeActivity", "DOWN")}
                 }
             }
         }

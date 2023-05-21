@@ -13,6 +13,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,7 +69,7 @@ fun SnakeSettings(snakeViewModel: SnakeViewModel, navController: NavController) 
         )
         TextField(
             value = snakeViewModel.id.collectAsState().value,
-            onValueChange = {snakeViewModel.id.value = it}
+            onValueChange = {snakeViewModel.id.value = it; snakeViewModel.setId()},
         )
         Log.i("SnakeSettings", "nav: ${navController.currentBackStackEntry?.arguments}")
 
