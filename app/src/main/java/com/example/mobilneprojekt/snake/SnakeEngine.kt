@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.EventListener
 import java.util.logging.Logger
 import kotlin.concurrent.thread
 import kotlin.random.Random
@@ -52,6 +53,9 @@ class SnakeEngine(
 
     var dataOpponentStack = mutableListOf<SnakeState>()
 
+    val valueListeners = mutableListOf<ValueEventListener>()
+    val childListeners = mutableListOf<ChildEventListener>()
+
     var move = Pair(1,0)
         set(value) {
             scope?.launch {
@@ -72,6 +76,9 @@ class SnakeEngine(
         myGameRef?.child(player1Id)?.child("round")?.setValue(round)
 
         myGameRef?.child(player2Id!!)?.child("gameReady")?.addValueEventListener(object : ValueEventListener {
+            init {
+                valueListeners.add(this)
+            }
             override fun onDataChange(snapshot: DataSnapshot) {
                 try{
                     Logger.getLogger("SnakeEngineReady").info("player2: $player2Id ready: ${snapshot.value}")
@@ -92,6 +99,9 @@ class SnakeEngine(
         })
 
         myGameRef?.child("foodPosition")?.addChildEventListener(object : ChildEventListener {
+            init {
+                childListeners.add(this)
+            }
             fun test(snapshot: DataSnapshot) = thread {
                 try{
                     Logger.getLogger("SnakeEngineFood").info("food: ${snapshot.value}")
@@ -124,6 +134,9 @@ class SnakeEngine(
         })
 
         myGameRef?.child(player2Id!!)?.child("round")?.addValueEventListener(object : ValueEventListener {
+            init {
+                valueListeners.add(this)
+            }
             fun test(snapshot: DataSnapshot) {
                 try {
                     thread{
@@ -151,7 +164,7 @@ class SnakeEngine(
 
     fun runGame() {
         scope?.launch {
-//            try {
+            try {
                 var snakeLength = 2
                 var score = 0
                 var gameStarted = false
@@ -163,6 +176,8 @@ class SnakeEngine(
                 myGameRef?.child(player1Id)?.child("data")?.setValue(mutableState.value)
                 Log.i("Snake", "Game started")
                 currentTimeMillis = SystemClock.uptimeMillis()
+
+
                 while (!gameEnded) {
                     Logger.getLogger("SnakeEngine").info("opp: ${opponentReadyTurn.value}, round: $round")
                     if ((SystemClock.uptimeMillis() - currentTimeMillis >= delay) && (opponentReadyTurn.value >= round)) {
@@ -264,10 +279,14 @@ class SnakeEngine(
                     }
                     delay(10)
                 }
-//            } catch (e: Exception) {
-//                onError.invoke("mainLoop: ${e.message }" ?: "Unknown error")
-//            }
-
+            } catch (e: Exception) {
+                onError.invoke("mainLoop: ${e.message }" ?: "Unknown error")
+            } finally {
+                for (listener in valueListeners)
+                    myGameRef?.removeEventListener(listener)
+                for (listener in childListeners)
+                    myGameRef?.removeEventListener(listener)
+            }
         }
     }
 

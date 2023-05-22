@@ -171,10 +171,16 @@ class SnakeActivity : ComponentActivity() {
                                             {(a,b) -> if (a || b) {
                                                 Logger.getLogger("SnakeActivityWin").info("a: $a, b: $b")
                                                 navController.navigateUp()
-                                                dialogText.value = if (b && !a) "Wygrałeś!" else if (!b) "Przegrałeś!" else "Remis!"
-                                                openDialog.value = true
+                                                runOnUiThread {
+                                                    dialogText.value = if (b && !a) "Wygrałeś!" else if (!b) "Przegrałeś!" else "Remis!"
+                                                    openDialog.value = true
+                                                }
                                                 true} else false},
-                                            {dialogText.value = it; openDialog.value = true; navController.navigateUp()})
+                                            {
+                                                runOnUiThread{
+                                                    dialogText.value = it; openDialog.value = true; navController.navigateUp()
+                                                }
+                                            })
                                     }
                                 } catch (e: Exception) {
                                     Log.e("StartSnake", e.stackTraceToString())
