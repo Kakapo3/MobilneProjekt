@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.arkanoid.ArkanoidActivity
+import com.example.arkanoid.ArkanoidMenuActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.example.mobilneprojekt.theme.MobilneProjektTheme
 
@@ -73,10 +75,10 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    fun MakeGameColumn(imgSrc: Int, title: String) {
+    fun MakeGameColumn(imgSrc: Int, title: String, onClick: () -> Unit) {
         Column() {
             Image(
-                painter = painterResource(id = R.drawable.game_icon_temp),
+                painter = painterResource(id = imgSrc),
                 contentDescription = "Temp icon - change it when you deploy a game",
                 Modifier.size(250.dp)
             )
@@ -86,15 +88,7 @@ class MainActivity : ComponentActivity() {
                 textAlign = TextAlign.Center,
                 fontSize = 60.sp
             )
-            val context = LocalContext.current as Activity
-            Button(onClick = {
-                startActivity(
-                    Intent(
-                        context,
-                        SnakeActivity::class.java
-                    )
-                )
-            }) {
+            Button(onClick = onClick) {
                 Text(text = "Play")
             }
         }
@@ -103,8 +97,23 @@ class MainActivity : ComponentActivity() {
     @Composable
     @ExperimentalFoundationApi
     fun GameScroll() {
-        HorizontalPager(pageCount = 3) { page ->
-            MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page")
+        val context = LocalContext.current as Activity
+        val gameIcons = listOf(R.drawable.game_icon_temp, R.drawable.game_icon_arkanoid)
+        val gameNames = listOf("Snake", "Arkanoid")
+        val gameActivities = listOf(SnakeActivity::class.java, ArkanoidMenuActivity::class.java)
+        HorizontalPager(pageCount = 2) {page ->
+            MakeGameColumn(
+                imgSrc = gameIcons[page],
+                title = gameNames[page],
+                onClick = {
+                    startActivity(
+                        Intent(
+                            context,
+                            gameActivities[page]
+                        )
+                    )
+                }
+            )
         }
     }
 

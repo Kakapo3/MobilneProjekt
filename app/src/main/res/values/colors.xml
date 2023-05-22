@@ -7,4 +7,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red_block">#de0000</color>
+    <color name="light_red_block">#ff3c00</color>
+    <color name="orange_block">#ff7700</color>
+    <color name="light_orange_block">#ffb400</color>
+    <color name="yellow_block">#fff000</color>
+    <color name="paddle_middle">#ffffff</color>
+    <color name="paddle_sides">#ff0000</color>
+    <color name="ball">#ffffff</color>
+    <color name="background">#1a80b6</color>
 </resources>
