@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,18 +49,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.logging.Logger
 
 class SnakeActivity : ComponentActivity() {
-    private val myViewModel: SnakeViewModel by viewModels()
+    private val snakeViewModel: SnakeViewModel by viewModels()
     private lateinit var scope: CoroutineScope
     @SuppressLint("SourceLockedOrientationActivity")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseMessaging.getInstance().subscribeToTopic("/snake/${myViewModel.id.value}")
+        FirebaseMessaging.getInstance().apply {
+            subscribeToTopic("/topics/${snakeViewModel.id.value}")
+            Logger.getLogger("SnakeActivity").info("subscribed to topic: /topics/${snakeViewModel.id.value}")
+            token.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.i("SnakeActivityToken", "token: ${it.result}")
+                }
+            }
+        }
 
         setContent {
             SnakeMobilneProjektTheme(
-                dynamicColor = false,
-                darkTheme = true
+                dynamicColor = false
             ) {
                 (LocalContext.current as? Activity)?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 val navController = rememberNavController()
@@ -107,7 +116,7 @@ class SnakeActivity : ComponentActivity() {
                                     SnakeMenu(
                                         onSingleplayerClick = {
 
-                                            myViewModel.snakeEngine = SnakeEngine(
+                                            snakeViewModel.snakeEngine = SnakeEngine(
                                                 mutableState = MutableStateFlow(
                                                     SnakeState(
                                                         snake1 = listOf(listOf(5,5)),
@@ -128,7 +137,7 @@ class SnakeActivity : ComponentActivity() {
                                                 onFoodEaten = { Logger.getLogger("SnakeActivity").warning("Food eaten")},
                                                 hostingPlayerId = "a",
                                                 player1Id = "a",
-                                                snakeViewModel = myViewModel,
+                                                snakeViewModel = snakeViewModel,
                                                 onError = {Logger.getLogger("SnakeMultiplayer").warning("Opponent died"); navController.navigateUp()},
                                             )
                                             navController.navigate("game")
@@ -141,11 +150,45 @@ class SnakeActivity : ComponentActivity() {
                                     SnakeGame()
                                 }
                                 composable("multiplayer") {
-                                    SnakeMultiplayer(myViewModel, navController)
+                                    SnakeMultiplayer(snakeViewModel, navController)
                                 }
                                 composable("settings") {
-                                    SnakeSettings(myViewModel, navController)
+                                    SnakeSettings(snakeViewModel, navController)
                                 }
+                            }
+
+                            val openDialog = remember { mutableStateOf(false) }
+                            val dialogText = remember { mutableStateOf("") }
+
+                            LaunchedEffect(Unit){
+                                try {
+                                    Logger.getLogger("SnakeActivity").info("id: ${snakeViewModel.id.value}")
+                                    Logger.getLogger("SnakeActivity").info("intent: ${intent.extras?.getString("type")}")
+                                    Logger.getLogger("SnakeActivity").info("intent opponent: ${intent.extras?.getString("id_opponent")}")
+                                    if(intent.extras != null && intent.extras?.getString("type") == "Snake-Multiplayer"){
+                                        connectToMultiplayerGame(snakeViewModel, intent.extras?.getString("id_opponent")!!, navController,
+                                            mutableStateOf("coś"),
+                                            {(a,b) -> if (a || b) {
+                                                Logger.getLogger("SnakeActivityWin").info("a: $a, b: $b")
+                                                navController.navigateUp()
+                                                dialogText.value = if (b && !a) "Wygrałeś!" else if (!b) "Przegrałeś!" else "Remis!"
+                                                openDialog.value = true
+                                                true} else false},
+                                            {dialogText.value = it; openDialog.value = true; navController.navigateUp()})
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("StartSnake", e.stackTraceToString())
+                                    Toast.makeText(this@SnakeActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                                }
+
+                            }
+
+                            if (openDialog.value) {
+                                AlertDialog(onDismissRequest = { openDialog.value = false },
+                                    text = { Text(text = dialogText.value) },
+                                    confirmButton = {
+                                        snakeButton(onClick = { openDialog.value = false }, text = "Ok")
+                                    })
                             }
                         }
 
@@ -159,21 +202,21 @@ class SnakeActivity : ComponentActivity() {
     fun SnakeGame() {
         scope = rememberCoroutineScope()
         LaunchedEffect(key1 = true){
-            myViewModel.snakeEngine!!.scope = scope
-            myViewModel.snakeEngine!!.runGame()
+            snakeViewModel.snakeEngine!!.scope = scope
+            snakeViewModel.snakeEngine!!.runGame()
         }
-        val state = myViewModel.snakeEngine!!.mutableStateExposed.collectAsState()
-        val stateOpponent = if(myViewModel.snakeEngine!!.player2Id != null) myViewModel.snakeEngine!!.mutableStateOpponentExposed.collectAsState() else null
+        val state = snakeViewModel.snakeEngine!!.mutableStateExposed.collectAsState()
+        val stateOpponent = if(snakeViewModel.snakeEngine!!.player2Id != null) snakeViewModel.snakeEngine!!.mutableStateOpponentExposed.collectAsState() else null
         Column(
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         ) {
-            Board(state.value, stateOpponent?.value, myViewModel)
+            Board(state.value, stateOpponent?.value, snakeViewModel)
             Controller {
                 when (it) {
-                    Direction.UP -> {myViewModel.snakeEngine!!.move = Pair(0, -1); Log.i("SnakeActivity", "UP")}
-                    Direction.LEFT -> {myViewModel.snakeEngine!!.move = Pair(-1, 0); Log.i("SnakeActivity", "LEFT")}
-                    Direction.RIGHT -> {myViewModel.snakeEngine!!.move = Pair(1, 0); Log.i("SnakeActivity", "RIGHT")}
-                    Direction.DOWN -> {myViewModel.snakeEngine!!.move = Pair(0, 1); Log.i("SnakeActivity", "DOWN")}
+                    Direction.UP -> {snakeViewModel.snakeEngine!!.move = Pair(0, -1); Log.i("SnakeActivity", "UP")}
+                    Direction.LEFT -> {snakeViewModel.snakeEngine!!.move = Pair(-1, 0); Log.i("SnakeActivity", "LEFT")}
+                    Direction.RIGHT -> {snakeViewModel.snakeEngine!!.move = Pair(1, 0); Log.i("SnakeActivity", "RIGHT")}
+                    Direction.DOWN -> {snakeViewModel.snakeEngine!!.move = Pair(0, 1); Log.i("SnakeActivity", "DOWN")}
                 }
             }
         }

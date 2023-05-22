@@ -2,6 +2,7 @@ package com.example.mobilneprojekt.snake
 
 import android.app.Application
 import android.content.Context
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,11 +21,12 @@ class SnakeViewModel(app: Application) : AndroidViewModel(app) {
     val currentSizeBoard: MutableStateFlow<Int>
     val FCM_API = "https://fcm.googleapis.com/fcm/send"
     val serverKey =
-        "key=" + "AIzaSyCK5m00Ymwb8ZKW1ksDc9dm5IClu8J-ajc"
+        "key=" + "AAAAtssMyv4:APA91bHGxdS72jbXhPFGH72duHxt0kEgHfs-8cSCcxhr_sLhVyPtKYx_6Rt_9dOSN1B_YtcbI_amifPXjO6WZUXrjdbSogeNMTcB-BqW02CEb4M6XDNZ6xaYjWIW6CRIffLz5QogHBxr"
     val contentType = "application/json"
     val requestQueue: RequestQueue by lazy {
         Volley.newRequestQueue(app.applicationContext)
     }
+    val isWaitingForOpponent = mutableStateOf(false)
 
     init{
         val sharedPrefs = getApplication<Application>().getSharedPreferences("settings-snake", Context.MODE_PRIVATE)

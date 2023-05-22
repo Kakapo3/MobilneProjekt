@@ -68,9 +68,6 @@ class SnakeEngine(
                 val player1Ready = Tasks.await(myGameRef.child(player1Id).child("gameReady").get()).value ?: -1
                 opponentReadyTurn.value = player1Ready as Int
             }
-            thread {
-
-            }
         }
         myGameRef?.child(player1Id)?.child("round")?.setValue(round)
 
@@ -159,12 +156,15 @@ class SnakeEngine(
                 var score = 0
                 var gameStarted = false
 
-
+                Logger.getLogger("SnakeEngine").info("runGame")
+                Logger.getLogger("SnakeEngine").info("myGameRef: $myGameRef")
+                Logger.getLogger("SnakeEngine").info("player1Id: $player1Id")
                 myGameRef?.child(player1Id)?.child("gameReady")?.setValue(round)
                 myGameRef?.child(player1Id)?.child("data")?.setValue(mutableState.value)
                 Log.i("Snake", "Game started")
                 currentTimeMillis = SystemClock.uptimeMillis()
                 while (!gameEnded) {
+                    Logger.getLogger("SnakeEngine").info("opp: ${opponentReadyTurn.value}, round: $round")
                     if ((SystemClock.uptimeMillis() - currentTimeMillis >= delay) && (opponentReadyTurn.value >= round)) {
                         gameStarted = true
                         Log.i("SnakeGameRunning", "Game running")
@@ -201,6 +201,8 @@ class SnakeEngine(
                                 }
                             }
                             val foodEaten = newPosition.toList() == it.food
+                            val foodPosition = if (foodEaten) generateFoodPosition() else it.food
+                            myGameRef?.child("foodPosition")?.setValue(foodPosition)
                             if (foodEaten) {
                                 onFoodEaten.invoke(hostingPlayerId == player1Id)
                                 snakeLength++
@@ -212,7 +214,7 @@ class SnakeEngine(
                             Logger.getLogger("SnakeEngineLoose").info("contains: ${it.snake1.contains(newPosition.toList())}")
                             Log.i("SnakeEngineLoose", "loose: $loose")
                             it.copy(
-                                food = if (myGameRef == null && foodEaten) generateFoodPosition() else it.food,
+                                food = foodPosition,
                                 snake1 = listOf(newPosition.toList()) + it.snake1.take(snakeLength - 1),
                                 direction = currentDirection.value,
                                 isGameOver = loose,
@@ -247,11 +249,6 @@ class SnakeEngine(
                                 if (opponent.snake1.contains(playerOne.snake1.first()))
                                     loose = loose.copy(second = true)
                                 gameEnded = onGameEnded.invoke(loose)
-                                if (playerOne.food.toList() == opponent.snake1.first()) {
-                                    onFoodEaten.invoke(hostingPlayerId == player2Id)
-                                    if(hostingPlayerId == player2Id)
-                                        myGameRef.child("foodPosition").setValue(generateFoodPosition().toList())
-                                }
                             }
                         }
                         updateStates()

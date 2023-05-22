@@ -1,7 +1,7 @@
 package com.example.mobilneprojekt.snake
 
+import android.os.Message
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +31,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.json.JSONException
 import org.json.JSONObject
 import java.util.logging.Logger
 import kotlin.concurrent.thread
@@ -75,6 +78,7 @@ fun SnakeMultiplayer(snakeViewModel: SnakeViewModel, navController: NavControlle
             text,
             {(a,b) -> if (a || b) {
                 navController.navigateUp()
+                Logger.getLogger("SnakeMultiplayer").warning("Game ended")
                 dialogText.value = if (b && !a) "Wygrałeś!" else if (!b) "Przegrałeś!" else "Remis!"
                 openDialog.value = true
                 true} else false},
@@ -88,6 +92,7 @@ fun SnakeMultiplayer(snakeViewModel: SnakeViewModel, navController: NavControlle
             text,
             {(a,b) -> if (a || b) {
                 navController.navigateUp()
+                Logger.getLogger("SnakeMultiplayer").warning("Game ended")
                 dialogText.value = if (b && !a) "Wygrałeś!" else if (!b) "Przegrałeś!" else "Remis!"
                 openDialog.value = true
                 true} else false},
@@ -114,8 +119,15 @@ fun hostMultiplayerGame(
     navController: NavController,
     text: MutableState<String>,
     onGameEnded: (Pair<Boolean, Boolean>) -> Boolean,
-    onError: (String) -> Unit
+    onError: (String) -> Unit,
 ) {
+    if (snakeViewModel.id.value == opponentId) {
+        onError("Nie możesz grać sam ze sobą")
+        return
+    } else if (snakeViewModel.isWaitingForOpponent.value) {
+        onError("Jesteś już w trakcie oczekiwania na przeciwnika")
+        return
+    }
     val firebase = FirebaseDatabase.getInstance("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
     Logger.getLogger("SnakeMultiplayer").warning("hostMultiplayerGame")
     firebase.getReference("snake").setValue("snake")
@@ -156,15 +168,16 @@ fun hostMultiplayerGame(
                     )),
                 onGameEnded,
                 {Logger.getLogger("SnakeMultiplayer").warning("Eated food")},
-                {s -> Logger.getLogger("SnakeMultiplayer").warning("Opponent died: $s"); navController.navigateUp()},
+                onError,
                 snakeViewModel.id.value,
-                opponentId,
+                snakeViewModel.id.value,
                 snapshot.value.toString(),
                 myRef
             )
             Logger.getLogger("SnakeMultiplayer").warning("navigating to game")
             addGameToAccount.child("secondPlayerId").removeEventListener(this)
             navController.navigate("game")
+            snakeViewModel.isWaitingForOpponent.value = false
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -173,7 +186,24 @@ fun hostMultiplayerGame(
 
     })
 
-    text.value = "Czekam na gracza"
+    val topic = "/topics/$opponentId" //topic has to match what the receiver subscribed to
+    val notification = JSONObject()
+    val notificationBody = JSONObject()
+    try {
+        notificationBody.put("title", "Snake")
+        notificationBody.put("message", "Gracz ${snakeViewModel.id.value} zaprasza Ciebie do gry!")   //Enter your notification message
+        notificationBody.put("type", "Snake")
+        notificationBody.put("id_opponent", snakeViewModel.id.value)
+        notificationBody.put("id", opponentId)
+        notification.put("to", topic)
+        notification.put("data", notificationBody)
+        Log.e("TAG", "try")
+    } catch (e: JSONException) {
+        Log.e("TAG", "onCreate: " + e.message)
+    }
+
+    sendNotification(notification, snakeViewModel)
+    Logger.getLogger("SnakeMultiplayer").warning("send message")
 }
 
 fun connectToMultiplayerGame(
@@ -184,67 +214,75 @@ fun connectToMultiplayerGame(
     onGameEnded: (Pair<Boolean, Boolean>) -> Boolean,
     onError: (String) -> Unit
 ) {
-    Logger.getLogger("SnakeMultiplayer").warning("connectToMultiplayerGame")
-    val firebase = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
-    val task = firebase.getReference("snake").child("accounts").child(opponentId).child("multiplayer").get()
-    Logger.getLogger("SnakeMultiplayer").warning("task: $task, opponentId: $opponentId")
-    thread {
-        val result = Tasks.await(task)
-        Logger.getLogger("SnakeMultiplayer").warning("result: ${result.value.toString()}")
-        val game = result.children.first()
-        Logger.getLogger("SnakeMultiplayer").warning("it.key: ")
-        val gameId = game.key!!
-        Logger.getLogger("SnakeMultiplayer").warning("gameId: $gameId")
-        val ref = firebase.getReference("snake").child("accounts").child(opponentId).child("multiplayer").child(gameId)
-        val boardSizeTask = ref.child("sizeOfBoard").get()
-        Tasks.await(boardSizeTask)
-        val boardSize = (Tasks.await(boardSizeTask).value as Long).toInt()
-        val speedSnakeTask = ref.child("speedSnake").get()
-        val speedSnake = Tasks.await(speedSnakeTask).value as Long
-        Logger.getLogger("SnakeMultiplayer").warning("boardSize: $boardSize")
-        Logger.getLogger("SnakeMultiplayer").warning("speedSnake: $speedSnake")
-        ref.child("secondPlayerId").addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snakeViewModel.snakeEngine = SnakeEngine(
-                    snakeViewModel,
-                    MutableStateFlow(
-                        SnakeState(
-                        snake1 = listOf(listOf(5,5)),
-                        food = Pair(8, 8).toList(),
-                        direction = Direction.RIGHT,
-                        isGameOver = false,
-                        score = 0
-                    )),
-                    MutableStateFlow(
-                        SnakeState(
-                            snake1 = listOf(listOf(1,1)),
-                            food = Pair(8, 8).toList(),
-                            direction = Direction.RIGHT,
-                            isGameOver = false,
-                            score = 0
-                        )),
-                    {(a,b) -> if (a || b) {Logger.getLogger("loose").warning("a = $a, b = $b"); navController.navigateUp(); true} else false},
-                    {Logger.getLogger("SnakeMultiplayer").warning("Eated food")},
-                    {s -> Logger.getLogger("SnakeMultiplayer").warning("Opponent died: $s"); navController.navigateUp()},
-                    opponentId,
-                    snakeViewModel.id.value,
-                    opponentId,
-                    firebase.getReference("snake").child("multiplayer").child(gameId),
-                    boardSize,
-                    speedSnake
-                )
-                Logger.getLogger("SnakeMultiplayer").warning("navigating to game")
-                ref.child("secondPlayerId").removeEventListener(this)
-                navController.navigate("game")
+    try {
+        Logger.getLogger("SnakeMultiplayer").warning("connectToMultiplayerGame")
+        val firebase = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
+        val task = firebase.getReference("snake").child("accounts").child(opponentId).child("multiplayer").get()
+        Logger.getLogger("SnakeMultiplayer").warning("task: $task, opponentId: $opponentId")
+        thread {
+            val result = Tasks.await(task)
+            Logger.getLogger("SnakeMultiplayer").warning("result: ${result.value.toString()}")
+            if (result.value == null) {
+                onError("Nie ma takiego gracza")
+                return@thread
             }
+            val game = result.children.first()
+            Logger.getLogger("SnakeMultiplayer").warning("it.key: ")
+            val gameId = game.key!!
+            Logger.getLogger("SnakeMultiplayer").warning("gameId: $gameId")
+            val ref = firebase.getReference("snake").child("accounts").child(opponentId).child("multiplayer").child(gameId)
+            val boardSizeTask = ref.child("sizeOfBoard").get()
+            Tasks.await(boardSizeTask)
+            val boardSize = (Tasks.await(boardSizeTask).value as Long).toInt()
+            val speedSnakeTask = ref.child("speedSnake").get()
+            val speedSnake = Tasks.await(speedSnakeTask).value as Long
+            Logger.getLogger("SnakeMultiplayer").warning("boardSize: $boardSize")
+            Logger.getLogger("SnakeMultiplayer").warning("speedSnake: $speedSnake")
+            ref.child("secondPlayerId").addValueEventListener(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snakeViewModel.snakeEngine = SnakeEngine(
+                        snakeViewModel,
+                        MutableStateFlow(
+                            SnakeState(
+                                snake1 = listOf(listOf(5,5)),
+                                food = Pair(8, 8).toList(),
+                                direction = Direction.RIGHT,
+                                isGameOver = false,
+                                score = 0
+                            )),
+                        MutableStateFlow(
+                            SnakeState(
+                                snake1 = listOf(listOf(1,1)),
+                                food = Pair(8, 8).toList(),
+                                direction = Direction.RIGHT,
+                                isGameOver = false,
+                                score = 0
+                            )),
+                        onGameEnded,
+                        {Logger.getLogger("SnakeMultiplayer").warning("Eated food")},
+                        onError,
+                        opponentId,
+                        snakeViewModel.id.value,
+                        opponentId,
+                        firebase.getReference("snake").child("multiplayer").child(gameId),
+                        boardSize,
+                        speedSnake
+                    )
+                    Logger.getLogger("SnakeMultiplayer").warning("navigating to game")
+                    ref.child("secondPlayerId").removeEventListener(this)
+                    navController.navigate("game")
+                }
 
-            override fun onCancelled(error: DatabaseError) {
-                Logger.getLogger("SnakeMultiplayer").warning("Error in connectToMultiplayerGame")
-            }
-        })
-        ref.child("secondPlayerId").setValue(snakeViewModel.id.value)
+                override fun onCancelled(error: DatabaseError) {
+                    Logger.getLogger("SnakeMultiplayer").warning("Error in connectToMultiplayerGame")
+                }
+            })
+            ref.child("secondPlayerId").setValue(snakeViewModel.id.value)
+        }
+    } catch (e: Exception) {
+        Logger.getLogger("SnakeMultiplayer").warning("Error in connectToMultiplayerGame")
+        onError("Błąd połączenia: ${e.message}")
     }
-
 }
 
 fun sendNotification(notification: JSONObject, snakeViewModel: SnakeViewModel) {
