@@ -70,68 +70,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun OldMenu() {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(40.dp)) {
-
-            MakeTitle(
-                title = "App title",
-            )
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                item {
-                    MakeGameRow(title = "Game 1")
-                    MakeGameRow(title = "Game 2")
-                    MakeGameRow(title = "Game 3")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MakeTitle(title: String) {
-    Text(
-        text = title,
-        textAlign = TextAlign.Center,
-        fontSize = 50.sp
-    )
-}
-
-@Composable
-fun MakeGameRow(title: String) {
-    Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-        Image(
-            painter = painterResource(id = R.drawable.game_icon_temp),
-            contentDescription = "Temp icon - change it when you deploy a game",
-            Modifier.size(50.dp)
-        )
-
-        Text(
-            text = title,
-            textAlign = TextAlign.Center,
-            fontSize = 40.sp
-        )
-
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "Play!")
-        }
-    }
-}
-
-@Composable
 fun MakeGameColumn(imgSrc : Int, title: String, link : Activity) {
     val context = LocalContext.current
     Column() {
         Image(
-            painter = painterResource(id = R.drawable.game_icon_temp),
+            painter = painterResource(id = imgSrc),
             contentDescription = "Temp icon - change it when you deploy a game",
             Modifier.size(250.dp).clickable {
                 context.startActivity(Intent(context, MinesweeperActivity::class.java))
@@ -174,22 +117,24 @@ fun MakeGameColumn(imgSrc : Int, title: String, link : Activity) {
 
 @Composable
 @ExperimentalFoundationApi
-fun GameScroll() {
+fun GameScroll(imgSrcList: ArrayList<Int>) {
     HorizontalPager(pageCount = 3) { page ->
-        MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page", MinesweeperActivity())
+        MakeGameColumn(imgSrc = imgSrcList[page], title = "Game $page", MinesweeperActivity())
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainMenu(){
-    // Tutaj możemy tworzyć właściwy interfejs głównego menu
-    GameScroll()
+
+    val imgSrcArray = arrayListOf(R.drawable.minesweeper, R.drawable.game_icon_temp, R.drawable.game_icon_temp)
+
+    GameScroll(imgSrcArray)
 }
 
 @Composable
 fun FriendsList(){
-    // A tutaj możemy tworzyć interfejs listy znajomych
+
     Text(text = "Friends list")
 }
 

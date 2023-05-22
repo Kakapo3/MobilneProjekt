@@ -1,15 +1,19 @@
 package com.example.mobilneprojekt.minesweeper
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import com.example.minesweeper.Field
+import com.example.mobilneprojekt.MainActivity
 import com.example.mobilneprojekt.R
 import kotlin.random.Random
 
@@ -223,5 +227,10 @@ class MinesweeperActivity : AppCompatActivity() {
         }
 
         return true
+    }
+
+    fun backToMenu(view: View) {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 }
