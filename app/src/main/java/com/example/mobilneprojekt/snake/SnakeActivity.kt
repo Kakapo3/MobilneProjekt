@@ -57,15 +57,7 @@ class SnakeActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseMessaging.getInstance().apply {
-            subscribeToTopic("/topics/${snakeViewModel.id.value}")
-            Logger.getLogger("SnakeActivity").info("subscribed to topic: /topics/${snakeViewModel.id.value}")
-            token.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.i("SnakeActivityToken", "token: ${it.result}")
-                }
-            }
-        }
+
 
         setContent {
             SnakeMobilneProjektTheme(

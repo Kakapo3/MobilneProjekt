@@ -14,6 +14,8 @@ import androidx.core.app.NotificationCompat
 import com.example.mobilneprojekt.MainActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.util.Random
@@ -21,10 +23,16 @@ import java.util.logging.Logger
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
+    override fun onCreate() {
+        super.onCreate()
+        Logger.getLogger("FirebaseAuthService").info("uid: ${Firebase.auth.currentUser?.uid}")
+    }
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         val a = FirebaseApp.getInstance()
         Logger.getLogger("FirebaseToken").info("token: $token")
+
     }
 
     private val ADMIN_CHANNEL_ID = "admin_channel"
