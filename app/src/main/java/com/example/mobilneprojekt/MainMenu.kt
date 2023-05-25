@@ -3,11 +3,9 @@ package com.example.mobilneprojekt
 import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -26,7 +24,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Logout
@@ -38,7 +35,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -68,6 +64,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.arkanoid.ArkanoidActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.example.mobilneprojekt.theme.Typography
 import com.google.firebase.auth.ktx.auth
@@ -97,7 +94,7 @@ fun MakeGameRow(title: String) {
 }
 
 @Composable
-fun MakeGameColumn(imgSrc : Int, title: String) {
+fun MakeGameColumn(imgSrc : Int, title: String, activity: Class<out ComponentActivity>) {
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -106,11 +103,11 @@ fun MakeGameColumn(imgSrc : Int, title: String) {
         verticalArrangement = Arrangement.Top
     ) {
         Image(
-            painter = painterResource(id = R.drawable.game_icon_temp),
+            painter = painterResource(id = imgSrc),
             contentDescription = "Temp icon - change it when you deploy a game",
             Modifier.size(250.dp).
                     clickable {
-                        val intent = Intent(context, SnakeActivity::class.java)
+                        val intent = Intent(context, activity)
                         context.startActivity(intent)
                     }
         )
@@ -167,9 +164,25 @@ fun MakeGameColumn(imgSrc : Int, title: String) {
 @Composable
 @ExperimentalFoundationApi
 fun GameScroll() {
+    val images = listOf(
+        R.drawable.game_icon_temp,
+        R.drawable.game_icon_arkanoid,
+    )
+    val titles = listOf(
+        "Snake",
+        "Arkanoid",
+    )
+    val classes = listOf(
+        SnakeActivity::class.java,
+        ArkanoidActivity::class.java,
+    )
     HorizontalPager(pageCount = 3
     ) { page ->
-        MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page")
+        MakeGameColumn(
+            imgSrc = images[page],
+            title = titles[page],
+            activity = classes[page]
+        )
     }
 }
 
