@@ -267,7 +267,6 @@ class SnakeEngine(
                             }
                         }
                         updateStates()
-
                     }
                     if ((SystemClock.uptimeMillis() - currentTimeMillis >= 200 * delay && opponentReadyTurn.value < round && gameStarted)){
                         onError.invoke("Opponent left the game")

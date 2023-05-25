@@ -1,5 +1,6 @@
 package com.example.mobilneprojekt.firebase
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -41,6 +42,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private val ADMIN_CHANNEL_ID = "admin_channel"
 
+    @SuppressLint("DiscouragedApi")
     override fun onMessageReceived(p0: RemoteMessage) {
         super.onMessageReceived(p0)
         Logger.getLogger("FirebaseMessage").info("message: ${p0.data}")

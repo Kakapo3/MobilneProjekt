@@ -156,7 +156,7 @@ class SnakeActivity : ComponentActivity() {
 
                             LaunchedEffect(Unit){
                                 try {
-                                    Logger.getLogger("SnakeActivity").info("id: ${snakeViewModel.id.value}")
+                                    Logger.getLogger("SnakeActivity").info("id: ${Firebase.auth.currentUser?.uid}")
                                     Logger.getLogger("SnakeActivity").info("intent: ${intent.extras?.getString("type")}")
                                     Logger.getLogger("SnakeActivity").info("intent opponent: ${intent.extras?.getString("id_opponent")}")
                                     if(intent.extras != null && intent.extras?.getString("type") == "Snake-Multiplayer"){

@@ -357,7 +357,7 @@ fun MainMenuScaffold () {
                             outputDirectory = outputDirectory,
                             executor = cameraExecutor,
                             onImageCaptured = {
-                                viewModel.updateImageRequest(it)
+                                updateImageRequest(it, viewModel.imageRequest, context)
                                 (context as Activity).runOnUiThread {
                                     navController.navigateUp()
                                 }

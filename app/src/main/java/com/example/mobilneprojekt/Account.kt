@@ -168,7 +168,7 @@ fun Account(navController: NavController, snackbarDelegate: SnackbarDelegate) {
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     TextField(value = viewModel.name.value, onValueChange = {
-                        viewModel.updateName(it)
+                        updateName(it, viewModel.name)
                     }, label = {
                         Text(text = "Name")
                     }, modifier = Modifier

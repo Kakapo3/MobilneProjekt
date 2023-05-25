@@ -18,58 +18,57 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Gallery(navController: NavController){
+fun Gallery(navController: NavController) {
     val viewModel: MainMenuViewModel = viewModel()
     val collectAsState = viewModel.uriItems.collectAsState().value
     val collectUris = viewModel.uriItems.collectAsState().value
 
-    MaterialTheme() {
-        Scaffold(
-            containerColor = Color.Black,
-            contentColor = Color.White,
-            content = { padding ->
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 160.dp),
-                    modifier = Modifier
-                        .padding(
-                            top = padding.calculateTopPadding(),
-                            bottom = 0.dp,
-                            start = 0.dp,
-                            end = 0.dp
+    Scaffold(
+        containerColor = Color.Black,
+        contentColor = Color.White,
+        content = { padding ->
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 160.dp),
+                modifier = Modifier
+                    .padding(
+                        top = padding.calculateTopPadding(),
+                        bottom = 0.dp,
+                        start = 0.dp,
+                        end = 0.dp
+                    )
+            ) {
+
+                items(collectAsState.size) {
+                    Box(
+                        contentAlignment = Alignment.BottomEnd,
+                    ) {
+                        val context = LocalContext.current
+                        Image(
+                            painter = rememberAsyncImagePainter(model = collectUris[it].uri),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .aspectRatio(1f)
+                                .clickable {
+                                    updateImageRequest(collectUris[it].uri, viewModel.imageRequest, context)
+                                    navController.navigateUp()
+                                }
                         )
-                ) {
-
-                    items(collectAsState.size) {
-                        Box(
-                            contentAlignment = Alignment.BottomEnd,
-                        ) {
-
-                            Image(
-                                painter = rememberAsyncImagePainter(model = collectUris[it].uri),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .aspectRatio(1f)
-                                    .clickable {
-                                        viewModel.updateImageRequest(collectUris[it].uri)
-                                        navController.navigateUp()
-                                    }
-                            )
-                        }
-
                     }
-                }
 
+                }
             }
-        )
-    }
+
+        }
+    )
 }
+

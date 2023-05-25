@@ -62,15 +62,15 @@ fun SnakeSettings(snakeViewModel: SnakeViewModel, navController: NavController) 
             onValueChangeFinished = {snakeViewModel.setSizeOfBoard()}
         )
         Text(text = "${snakeViewModel.sizeOfBoard.collectAsState().value}")
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = "id",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        TextField(
-            value = snakeViewModel.id.collectAsState().value,
-            onValueChange = {snakeViewModel.id.value = it; snakeViewModel.setId()},
-        )
+//        Spacer(modifier = Modifier.height(10.dp))
+//        Text(
+//            text = "id",
+//            style = MaterialTheme.typography.bodyLarge,
+//        )
+//        TextField(
+//            value = snakeViewModel.id.collectAsState().value,
+//            onValueChange = {snakeViewModel.id.value = it; snakeViewModel.setId()},
+//        )
         Log.i("SnakeSettings", "nav: ${navController.currentBackStackEntry?.arguments}")
 
     }
