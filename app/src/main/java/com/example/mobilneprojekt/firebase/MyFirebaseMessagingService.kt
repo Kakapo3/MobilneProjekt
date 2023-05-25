@@ -1,5 +1,6 @@
 package com.example.mobilneprojekt.firebase
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -14,6 +15,8 @@ import androidx.core.app.NotificationCompat
 import com.example.mobilneprojekt.MainActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.util.Random
@@ -21,14 +24,25 @@ import java.util.logging.Logger
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
+    override fun onCreate() {
+        super.onCreate()
+        Logger.getLogger("FirebaseService").info("service created")
+        Logger.getLogger("FirebaseService").info("user: ${Firebase.auth.currentUser?.uid}")
+        Firebase.auth.addAuthStateListener {
+            Logger.getLogger("FirebaseService").info("user: ${Firebase.auth.currentUser?.uid}")
+        }
+    }
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         val a = FirebaseApp.getInstance()
         Logger.getLogger("FirebaseToken").info("token: $token")
+
     }
 
     private val ADMIN_CHANNEL_ID = "admin_channel"
 
+    @SuppressLint("DiscouragedApi")
     override fun onMessageReceived(p0: RemoteMessage) {
         super.onMessageReceived(p0)
         Logger.getLogger("FirebaseMessage").info("message: ${p0.data}")
@@ -69,7 +83,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val notificationBuilder = NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
             .setContentTitle(p0.data["title"])
             .setContentText(p0.data["message"])
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(this.resources.getIdentifier("ic_launcher", "mipmap", this.packageName))
             .setAutoCancel(true)
             .setSound(notificationSoundUri)
             .setContentIntent(pendingIntent)

@@ -43,6 +43,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mobilneprojekt.snake.theme.SnakeMobilneProjektTheme
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,15 +57,7 @@ class SnakeActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseMessaging.getInstance().apply {
-            subscribeToTopic("/topics/${snakeViewModel.id.value}")
-            Logger.getLogger("SnakeActivity").info("subscribed to topic: /topics/${snakeViewModel.id.value}")
-            token.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.i("SnakeActivityToken", "token: ${it.result}")
-                }
-            }
-        }
+
 
         setContent {
             SnakeMobilneProjektTheme(
@@ -162,7 +156,7 @@ class SnakeActivity : ComponentActivity() {
 
                             LaunchedEffect(Unit){
                                 try {
-                                    Logger.getLogger("SnakeActivity").info("id: ${snakeViewModel.id.value}")
+                                    Logger.getLogger("SnakeActivity").info("id: ${Firebase.auth.currentUser?.uid}")
                                     Logger.getLogger("SnakeActivity").info("intent: ${intent.extras?.getString("type")}")
                                     Logger.getLogger("SnakeActivity").info("intent opponent: ${intent.extras?.getString("id_opponent")}")
                                     if(intent.extras != null && intent.extras?.getString("type") == "Snake-Multiplayer"){
