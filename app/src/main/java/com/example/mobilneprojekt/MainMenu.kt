@@ -1,6 +1,7 @@
 package com.example.mobilneprojekt
 
 import android.app.Activity
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -67,6 +68,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.mobilneprojekt.snake.SnakeActivity
 import com.example.mobilneprojekt.theme.Typography
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -106,7 +108,11 @@ fun MakeGameColumn(imgSrc : Int, title: String) {
         Image(
             painter = painterResource(id = R.drawable.game_icon_temp),
             contentDescription = "Temp icon - change it when you deploy a game",
-            Modifier.size(250.dp)
+            Modifier.size(250.dp).
+                    clickable {
+                        val intent = Intent(context, SnakeActivity::class.java)
+                        context.startActivity(intent)
+                    }
         )
 
         Text(
@@ -174,7 +180,7 @@ fun MainMenu(){
     GameScroll()
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainMenuScaffold () {
     val navController = rememberNavController()
@@ -383,8 +389,6 @@ fun MainMenuScaffold () {
                 }
             }
         }
-
-
     }
 }
 

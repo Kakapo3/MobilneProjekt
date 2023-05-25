@@ -81,7 +81,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val notificationBuilder = NotificationCompat.Builder(this, ADMIN_CHANNEL_ID)
             .setContentTitle(p0.data["title"])
             .setContentText(p0.data["message"])
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(this.resources.getIdentifier("ic_launcher", "mipmap", this.packageName))
             .setAutoCancel(true)
             .setSound(notificationSoundUri)
             .setContentIntent(pendingIntent)
