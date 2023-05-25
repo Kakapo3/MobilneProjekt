@@ -25,7 +25,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onCreate() {
         super.onCreate()
-        Logger.getLogger("FirebaseAuthService").info("uid: ${Firebase.auth.currentUser?.uid}")
+        Logger.getLogger("FirebaseService").info("service created")
+        Logger.getLogger("FirebaseService").info("user: ${Firebase.auth.currentUser?.uid}")
+        Firebase.auth.addAuthStateListener {
+            Logger.getLogger("FirebaseService").info("user: ${Firebase.auth.currentUser?.uid}")
+        }
     }
 
     override fun onNewToken(token: String) {

@@ -17,6 +17,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -49,7 +51,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainNav(){
     val navController = rememberNavController()
-    val viewModel: MainMenuViewModel = MainMenuViewModel()
 
     NavHost(navController = navController, startDestination = if (Firebase.auth.currentUser == null) "login" else "mainMenu") {
         composable("mainMenu") {
