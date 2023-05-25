@@ -36,16 +36,13 @@ class MainActivity : ComponentActivity() {
             MobilneProjektTheme(
                 dynamicColor = true,
             ) {
+                val viewModel: MainMenuViewModel = viewModel()
                 // A surface container using the 'background' color from the theme
                 MainNav()
             }
         }
     }
 }
-
-
-// Można też ten duży plik podzielić na mniejsze, żeby było czytelniej
-
 
 @Composable
 fun MainNav(){
@@ -80,8 +77,7 @@ fun MainNav(){
             }
         }
         if (Firebase.auth.currentUser != null){
-            Firebase.auth.addAuthStateListener ( object :
-                FirebaseAuth.AuthStateListener {
+            Firebase.auth.addAuthStateListener ( object : AuthStateListener {
                 override fun onAuthStateChanged(auth: FirebaseAuth) {
                     Logger.getLogger("MainNav").warning("currentUser: ${auth.currentUser?.uid}")
                     if (auth.currentUser == null) {

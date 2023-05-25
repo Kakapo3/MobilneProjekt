@@ -1,5 +1,6 @@
 package com.example.mobilneprojekt.snake
 
+import android.content.Context
 import android.os.Message
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -19,11 +20,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
+import com.example.mobilneprojekt.firebase.FirebaseMessageSender
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -71,6 +74,7 @@ fun SnakeMultiplayer(snakeViewModel: SnakeViewModel, navController: NavControlle
         val text = remember {
             mutableStateOf("Czekam...")
         }
+        val context = LocalContext.current
         snakeButton(onClick = { hostMultiplayerGame(
             snakeViewModel,
             idState.value,
@@ -82,7 +86,8 @@ fun SnakeMultiplayer(snakeViewModel: SnakeViewModel, navController: NavControlle
                 dialogText.value = if (b && !a) "Wygrałeś!" else if (!b) "Przegrałeś!" else "Remis!"
                 openDialog.value = true
                 true} else false},
-            {dialogText.value = it; openDialog.value = true}
+            {dialogText.value = it; openDialog.value = true},
+            context
         ) }, text = "Start host")
         Spacer(modifier = Modifier.width(10.dp))
         snakeButton(onClick = { connectToMultiplayerGame(
@@ -120,6 +125,7 @@ fun hostMultiplayerGame(
     text: MutableState<String>,
     onGameEnded: (Pair<Boolean, Boolean>) -> Boolean,
     onError: (String) -> Unit,
+    context: Context
 ) {
     if (snakeViewModel.id.value == opponentId) {
         onError("Nie możesz grać sam ze sobą")
@@ -202,7 +208,8 @@ fun hostMultiplayerGame(
         Log.e("TAG", "onCreate: " + e.message)
     }
 
-    sendNotification(notification, snakeViewModel)
+    val sender = FirebaseMessageSender(context)
+    sender.sendNotification(notification)
     Logger.getLogger("SnakeMultiplayer").warning("send message")
 }
 
@@ -285,22 +292,4 @@ fun connectToMultiplayerGame(
     }
 }
 
-fun sendNotification(notification: JSONObject, snakeViewModel: SnakeViewModel) {
-    Log.e("TAG", "sendNotification")
-    val jsonObjectRequest = object : JsonObjectRequest(snakeViewModel.FCM_API, notification,
-        Response.Listener<JSONObject> { response ->
-            Log.i("TAG", "onResponse: $response")
-        },
-        Response.ErrorListener {
-            Log.i("TAG", "onErrorResponse: Didn't work")
-        }) {
 
-        override fun getHeaders(): Map<String, String> {
-            val params = HashMap<String, String>()
-            params["Authorization"] = snakeViewModel.serverKey
-            params["Content-Type"] = snakeViewModel.contentType
-            return params
-        }
-    }
-    snakeViewModel.requestQueue.add(jsonObjectRequest)
-}

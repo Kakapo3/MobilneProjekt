@@ -2,6 +2,15 @@ package com.example.mobilneprojekt
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,10 +20,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.MoreVert
@@ -25,6 +37,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +51,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -83,7 +97,12 @@ fun MakeGameRow(title: String) {
 @Composable
 fun MakeGameColumn(imgSrc : Int, title: String) {
     val context = LocalContext.current
-    Column() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
         Image(
             painter = painterResource(id = R.drawable.game_icon_temp),
             contentDescription = "Temp icon - change it when you deploy a game",
@@ -142,7 +161,8 @@ fun MakeGameColumn(imgSrc : Int, title: String) {
 @Composable
 @ExperimentalFoundationApi
 fun GameScroll() {
-    HorizontalPager(pageCount = 3) { page ->
+    HorizontalPager(pageCount = 3
+    ) { page ->
         MakeGameColumn(imgSrc = R.drawable.game_icon_temp, title = "Game $page")
     }
 }
@@ -154,7 +174,7 @@ fun MainMenu(){
     GameScroll()
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun MainMenuScaffold () {
     val navController = rememberNavController()
@@ -171,6 +191,9 @@ fun MainMenuScaffold () {
         )
     }
     val viewModel: MainMenuViewModel = viewModel()
+    val search = remember {
+        mutableStateOf(false)
+    }
     LaunchedEffect(navController.currentDestination){
         Logger.getLogger("Main menu").info("Route: ${navController.currentDestination?.route}")
         Logger.getLogger("Main menu").info("Route: ${navController.currentDestination?.route == "mainMenu"}")
@@ -182,11 +205,25 @@ fun MainMenuScaffold () {
                 Snackbar(snackbarData = it, contentColor = backGroundColor)
             }
         },
-        topBar = { if (navController.currentBackStackEntryAsState().value?.destination?.route != "camera" || navController.currentBackStackEntryAsState().value?.destination?.route != "gallery") {
+        topBar = {
+            val a = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
             TopAppBar(
-//            colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                containerColor = com.example.mobilneprojekt.theme.Purple80,
-//            ),
+                navigationIcon = {
+                    AnimatedVisibility(
+                        visible = a.value?.destination?.route == "camera" || a.value?.destination?.route == "gallery",
+                        enter = slideInHorizontally(
+                            initialOffsetX = {-it },
+                            animationSpec = tween(500)),
+                        exit = slideOutHorizontally(
+                            targetOffsetX = { - it },
+                            animationSpec = tween(500)),
+                    ) {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        }
+
+                    }
+                },
                 title = { Text(text = "Game hub", style = Typography.headlineMedium) },
                 actions = {
                     IconButton(onClick = { showMenu.value = !showMenu.value }) {
@@ -224,15 +261,23 @@ fun MainMenuScaffold () {
                     }
                 }
             )
-        }
         },
         bottomBar = {
-            if (navController.currentBackStackEntryAsState().value?.destination?.route != "camera" || navController.currentBackStackEntryAsState().value?.destination?.route != "gallery") {
+            val a = navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
+            AnimatedVisibility(
+                visible = a.value?.destination?.route != "camera" && a.value?.destination?.route != "gallery",
+                enter = slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = tween(500)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = tween(500)
+                )
+            ) {
                 NavigationBar {
                     // Tworzymy dolny pasek nawigacji
                     // selectedItem to stan, który będzie przechowywał informację o tym, który element jest zaznaczony
-
-
                     NavigationBarItem(
                         selected = navController.currentBackStackEntryAsState().value?.destination?.route == "mainMenu",
                         onClick = {
@@ -246,7 +291,6 @@ fun MainMenuScaffold () {
                             )
                         }
                     )
-
                     NavigationBarItem(
                         selected = navController.currentBackStackEntryAsState().value?.destination?.route == "friends",
                         onClick = {
@@ -260,7 +304,6 @@ fun MainMenuScaffold () {
                             )
                         }
                     )
-
                     NavigationBarItem(
                         selected = navController.currentBackStackEntryAsState().value?.destination?.route == "account",
                         onClick = {
@@ -274,10 +317,7 @@ fun MainMenuScaffold () {
                             )
                         }
                     )
-
                 }
-
-
             }
         }
         // W Kotlinie ostatni parametr jako funkcja może być wyciągnięta poza nawiasy
@@ -303,23 +343,28 @@ fun MainMenuScaffold () {
             //jak wyywołujemy funkcję navController.navigate("nazwa ekranu"), to zmieniamy ekran
             NavHost(navController = navController, startDestination = "mainMenu") {
                 composable("mainMenu") { MainMenu() }
-                composable("friends") { FriendsList() }
+                composable("friends") { FriendsList(search) }
                 composable("account") { Account(navController, snackbarDelegate) }
-                composable("camera") { CameraView(
-                    outputDirectory = outputDirectory,
-                    executor = cameraExecutor,
-                    onImageCaptured = {
-                        viewModel.updateImageRequest(it)
-                        (context as Activity).runOnUiThread {
-                            navController.navigateUp()
-                        }
+                composable("camera") {
+                    EnterAnimation {
+                        CameraView(
+                            outputDirectory = outputDirectory,
+                            executor = cameraExecutor,
+                            onImageCaptured = {
+                                viewModel.updateImageRequest(it)
+                                (context as Activity).runOnUiThread {
+                                    navController.navigateUp()
+                                }
 
-                    },
-                    onError = {
-                        Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
-                    }
-                ) }
-                composable("gallery") { Gallery(navController) }
+                            },
+                            onError = {
+                                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    } }
+                composable("gallery") { EnterAnimation {
+                    Gallery(navController)
+                }  }
             }
         }
         if(showDialogInfo.value){

@@ -52,12 +52,16 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.viewmodel.compose.*
 import androidx.navigation.NavController
+import coil.request.ImageRequest
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.database.ktx.database
 import java.util.logging.Logger
@@ -66,6 +70,10 @@ import kotlin.concurrent.thread
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Account(navController: NavController, snackbarDelegate: SnackbarDelegate) {
+
+    SideEffect {
+
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
@@ -160,8 +168,7 @@ fun Account(navController: NavController, snackbarDelegate: SnackbarDelegate) {
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     TextField(value = viewModel.name.value, onValueChange = {
-                        viewModel.name.value = it
-                        db.getReference("accounts/${Firebase.auth.currentUser?.uid}/name").setValue(it)
+                        viewModel.updateName(it)
                     }, label = {
                         Text(text = "Name")
                     }, modifier = Modifier

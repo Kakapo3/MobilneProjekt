@@ -1,16 +1,7 @@
 package com.example.mobilneprojekt
 
-
-
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-
-
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +25,9 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -140,7 +133,7 @@ fun LoginScreen(controller: NavHostController) {
                             duration = SnackbarDuration.Short
                         )
                     } else {
-                        viewModel.login(email.value, password.value, controller, visible, snackbarDelegate)
+                        login(email.value, password.value, controller, visible, snackbarDelegate)
                     }
                 },
                 shape = MaterialTheme.shapes.medium
@@ -328,7 +321,7 @@ fun RegisterScreen(controller: NavHostController) {
                             duration = SnackbarDuration.Short
                         )
                     } else {
-                        viewModel.createAccount(
+                        createAccount(
                             email.value,
                             password.value,
                             controller,
