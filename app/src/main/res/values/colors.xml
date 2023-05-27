@@ -16,4 +16,5 @@
     <color name="paddle_sides">#ff0000</color>
     <color name="ball">#ffffff</color>
     <color name="background">#1a80b6</color>
+    <color name="green">#244F1E</color>
 </resources>
