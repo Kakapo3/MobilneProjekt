@@ -84,7 +84,7 @@ fun MakeGameColumn(imgSrc : Int, title: String, link : Activity) {
         Text(
             text = title,
             textAlign = TextAlign.Center,
-            fontSize = 60.sp
+            fontSize = 40.sp
         )
 
         Row() {
@@ -117,9 +117,9 @@ fun MakeGameColumn(imgSrc : Int, title: String, link : Activity) {
 
 @Composable
 @ExperimentalFoundationApi
-fun GameScroll(imgSrcList: ArrayList<Int>) {
+fun GameScroll(gameNamesArray: ArrayList<String>, imgSrcList: ArrayList<Int>) {
     HorizontalPager(pageCount = 3) { page ->
-        MakeGameColumn(imgSrc = imgSrcList[page], title = "Game $page", MinesweeperActivity())
+        MakeGameColumn(imgSrc = imgSrcList[page], title = gameNamesArray[page], MinesweeperActivity())
     }
 }
 
@@ -127,9 +127,11 @@ fun GameScroll(imgSrcList: ArrayList<Int>) {
 @Composable
 fun MainMenu(){
 
+    val gameNamesArray = arrayListOf("Minesweeper", "Game 1", "Game 2")
     val imgSrcArray = arrayListOf(R.drawable.minesweeper, R.drawable.game_icon_temp, R.drawable.game_icon_temp)
 
-    GameScroll(imgSrcArray)
+
+    GameScroll(gameNamesArray, imgSrcArray)
 }
 
 @Composable
