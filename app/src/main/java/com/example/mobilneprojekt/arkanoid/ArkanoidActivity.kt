@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.mobilneprojekt.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlin.math.abs
 
 
@@ -82,11 +85,11 @@ class ArkanoidActivity : ComponentActivity() {
                     Triple(11, 0, 4), Triple(11, 1, 4), Triple(11, 2, 4), Triple(11, 3, 4), Triple(11, 4, 4), Triple(11, 5, 4), Triple(11, 6, 4), Triple(11, 7, 4), Triple(11, 8, 4), Triple(11, 9, 4), Triple(11, 10, 4), Triple(11, 11, 4), Triple(11, 12, 4),
                 )
             ),
-//            Level("Test",
-//                listOf(
-//                    Triple(3, 10, 1)
-//                )
-//            ),
+            Level("Test",
+                listOf(
+                    Triple(3, 10, 1)
+                )
+            ),
             Level("Level 3",
                 listOf(
                     Triple(2, 0, 1), Triple(3, 0, 1), Triple(4, 0, 1), Triple(5, 0, 1), Triple(6, 0, 1), Triple(7, 0, 1), Triple(8, 0, 1), Triple(9, 0, 1), Triple(10, 0, 1), Triple(11, 0, 1), Triple(12, 0, 1), Triple(13, 0, 1), Triple(14, 0, 5),
@@ -266,6 +269,15 @@ class ArkanoidActivity : ComponentActivity() {
 
                 if (score == numBricks * 10) {
                     paint.textSize = 90f
+                    if (levelNumber == 0){
+                        achievementCompleted("arkanoid1")
+                    }
+                    else if (levelNumber == 1) {
+                        achievementCompleted("arkanoid2")
+                    }
+                    else if (levelNumber == 2) {
+                        achievementCompleted("arkanoid3")
+                    }
                     canvas.drawText("You won!", (screenX / 4).toFloat(), (screenY / 2).toFloat(), paint)
                 }
 
@@ -337,5 +349,11 @@ class ArkanoidActivity : ComponentActivity() {
         super.onPause()
 
         arkanoidView!!.pause()
+    }
+
+    val db = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
+
+    fun achievementCompleted(name: String) { val currUser = Firebase.auth.currentUser?.uid
+        db.getReference("accounts/${currUser}/achievements/${name}").setValue(true)
     }
 }

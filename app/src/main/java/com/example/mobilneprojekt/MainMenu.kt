@@ -68,6 +68,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.arkanoid.ArkanoidActivity
+import com.example.arkanoid.ArkanoidMenuActivity
 import com.example.mobilneprojekt.minesweeper.ChooseMinesActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.example.mobilneprojekt.theme.Typography
@@ -200,25 +201,25 @@ fun GameScroll() {
 
     val achievements = listOf(
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
-        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
+        listOf(R.drawable.arkanoid1_achievement_greyed, R.drawable.arkanoid2_achievement_greyed, R.drawable.arkanoid3_achievement_greyed, R.drawable.arkanoid1_achievement, R.drawable.arkanoid2_achievement, R.drawable.arkanoid3_achievement),
         listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
     )
 
     val achievementNames = listOf(
         listOf("a1", "a2", "a3"),
-        listOf("a1", "a2", "a3"),
+        listOf("arkanoid1", "arkanoid2", "arkanoid3"),
         listOf("m1", "m2", "m3"),
     )
 
     val achievementDesc = listOf(
         listOf("d1", "d2", "d3"),
-        listOf("d1", "d2", "d3"),
+        listOf("You have beaten the first level", "You have beaten the second level", "You have beaten the third level"),
         listOf("Win a game with at least 10 mines", "Win a game with at least 15 mines", "Win a game with at least 20 mines"),
     )
 
     val classes = listOf(
         SnakeActivity::class.java,
-        ArkanoidActivity::class.java,
+        ArkanoidMenuActivity::class.java,
         ChooseMinesActivity::class.java
     )
 
