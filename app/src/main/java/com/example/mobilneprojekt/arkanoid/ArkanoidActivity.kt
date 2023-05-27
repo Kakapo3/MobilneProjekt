@@ -85,11 +85,11 @@ class ArkanoidActivity : ComponentActivity() {
                     Triple(11, 0, 4), Triple(11, 1, 4), Triple(11, 2, 4), Triple(11, 3, 4), Triple(11, 4, 4), Triple(11, 5, 4), Triple(11, 6, 4), Triple(11, 7, 4), Triple(11, 8, 4), Triple(11, 9, 4), Triple(11, 10, 4), Triple(11, 11, 4), Triple(11, 12, 4),
                 )
             ),
-            Level("Test",
-                listOf(
-                    Triple(3, 10, 1)
-                )
-            ),
+//            Level("Test",
+//                listOf(
+//                    Triple(3, 10, 1)
+//                )
+//            ),
             Level("Level 3",
                 listOf(
                     Triple(2, 0, 1), Triple(3, 0, 1), Triple(4, 0, 1), Triple(5, 0, 1), Triple(6, 0, 1), Triple(7, 0, 1), Triple(8, 0, 1), Triple(9, 0, 1), Triple(10, 0, 1), Triple(11, 0, 1), Triple(12, 0, 1), Triple(13, 0, 1), Triple(14, 0, 5),
