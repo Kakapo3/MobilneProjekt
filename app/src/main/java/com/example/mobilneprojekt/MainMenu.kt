@@ -134,9 +134,9 @@ fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: Li
                 for (achievement in achievementNames) {
                     val newImages = achievementImages.toMutableList()
                     if (a.hasChild(achievement)) {
-                        newImages[currAchiv - 1] = currAchiv
+                        newImages[currAchiv - 1] = currAchiv + 2
                     } else {
-                        newImages[currAchiv - 1] = 0
+                        newImages[currAchiv - 1] = currAchiv - 1
                     }
                     achievementImages = newImages
                     currAchiv += 1
@@ -199,9 +199,9 @@ fun GameScroll() {
     )
 
     val achievements = listOf(
-        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
-        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
-        listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
+        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
+        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
+        listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
     )
 
     val achievementNames = listOf(
