@@ -59,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -74,6 +75,7 @@ import com.example.mobilneprojekt.theme.Typography
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.logging.Logger
 
@@ -100,9 +102,9 @@ fun MakeGameRow(title: String) {
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: List<String>, achievementDesc: List<String>, title: String, activity: Class<out ComponentActivity>) {
+fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: List<String>, title: String, activity: Class<out ComponentActivity>) {
     val context = LocalContext.current
-    Logger.getLogger("AAAAAAAAAAAAAA").info(achievementNames.toString())
+
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -129,19 +131,33 @@ fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: Li
         Row() {
             var achievementImages by remember { mutableStateOf(mutableListOf(0, 0, 0)) }
             val currUser = Firebase.auth.currentUser?.uid
+
             db.getReference("accounts/${currUser}/achievements").get().addOnSuccessListener { a ->
-                var currAchiv = 1
+                var currAchiv = 0
                 for (achievement in achievementNames) {
                     val newImages = achievementImages.toMutableList()
                     if (a.hasChild(achievement)) {
-                        newImages[currAchiv - 1] = currAchiv + 2
+                        newImages[currAchiv] = currAchiv + 3
                     } else {
-                        newImages[currAchiv - 1] = currAchiv - 1
+                        newImages[currAchiv] = currAchiv
                     }
                     achievementImages = newImages
                     currAchiv += 1
                 }
             }
+
+            val achievementDesc = mutableListOf("", "", "")
+
+            db.getReference("${title.lowercase()}/achievements").get().addOnSuccessListener { a ->
+                var currAchiv = 0
+                for (achivement in a.children) {
+                    achievementDesc[currAchiv] = achivement.child("description").value.toString()
+                    currAchiv += 1
+                }
+            }
+
+
+
             Image(
                 painter = painterResource(id = achievementSrc[achievementImages[0]]),
                 contentDescription = "Achievement icon",
@@ -210,12 +226,6 @@ fun GameScroll() {
         listOf("m1", "m2", "m3"),
     )
 
-    val achievementDesc = listOf(
-        listOf("d1", "d2", "d3"),
-        listOf("d1", "d2", "d3"),
-        listOf("Win a game with at least 10 mines", "Win a game with at least 15 mines", "Win a game with at least 20 mines"),
-    )
-
     val classes = listOf(
         SnakeActivity::class.java,
         ArkanoidActivity::class.java,
@@ -229,7 +239,6 @@ fun GameScroll() {
             title = titles[page],
             achievementSrc = achievements[page],
             achievementNames = achievementNames[page],
-            achievementDesc = achievementDesc[page],
             activity = classes[page]
         )
     }
