@@ -65,6 +65,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.arkanoid.ArkanoidActivity
+import com.example.mobilneprojekt.minesweeper.MinesweeperActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.example.mobilneprojekt.theme.Typography
 import com.google.firebase.auth.ktx.auth
@@ -167,14 +168,17 @@ fun GameScroll() {
     val images = listOf(
         R.drawable.game_icon_temp,
         R.drawable.game_icon_arkanoid,
+        R.drawable.game_icon_minesweeper
     )
     val titles = listOf(
         "Snake",
         "Arkanoid",
+        "Minesweeper"
     )
     val classes = listOf(
         SnakeActivity::class.java,
         ArkanoidActivity::class.java,
+        MinesweeperActivity::class.java
     )
     HorizontalPager(pageCount = 3
     ) { page ->
