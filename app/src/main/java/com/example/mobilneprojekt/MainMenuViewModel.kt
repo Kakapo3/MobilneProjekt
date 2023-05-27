@@ -39,8 +39,49 @@ class MainMenuViewModel(val app: Application) : AndroidViewModel(app) {
     val uriItems = _uriItems.asStateFlow()
     val sender = FirebaseMessageSender(app)
 
+    val achievements = mutableStateListOf<String>()
+    val achievementList = HashMap<String, Achievement>()
+    val games = listOf("arkanoid", "snake", "minesweeper")
+
     private var maxCount = 20
     init {
+
+        for (game in games) {
+            db.getReference("${game}/achievements").get().addOnSuccessListener { data ->
+                data.children.forEach { a ->
+                    achievementList.put(a.key.toString(), Achievement(
+                        game = game,
+                        title = a.child("title").getValue(String::class.java) ?: "",
+                        description = a.child("description").getValue(String::class.java) ?: ""))
+                }
+
+                Logger.getLogger("Achievemet").info(achievementList.toString())
+            }
+        }
+
+        val achievementListener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                achievements.add(snapshot.key.toString())
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        }
+
         val accountsListener = object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 thread {
@@ -142,6 +183,7 @@ class MainMenuViewModel(val app: Application) : AndroidViewModel(app) {
                 db.getReference("accounts/${Firebase.auth.currentUser?.uid}/invites")
                     .addChildEventListener(inviteListener)
                 db.getReference("accounts_list").addChildEventListener(accountsListener)
+                db.getReference("accounts/${Firebase.auth.currentUser?.uid}/achievements").addChildEventListener(achievementListener)
             }
             updateImageRequest(
                 imageRequest = imageRequest,
