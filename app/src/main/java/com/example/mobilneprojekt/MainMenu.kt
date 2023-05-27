@@ -100,7 +100,7 @@ fun MakeGameRow(title: String) {
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: List<String>, title: String, activity: Class<out ComponentActivity>) {
+fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: List<String>, achievementDesc: List<String>, title: String, activity: Class<out ComponentActivity>) {
     val context = LocalContext.current
     Logger.getLogger("AAAAAAAAAAAAAA").info(achievementNames.toString())
     Column(
@@ -144,39 +144,39 @@ fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: Li
             }
             Image(
                 painter = painterResource(id = achievementSrc[achievementImages[0]]),
-                contentDescription = "Temp icon - change it when you deploy a game",
+                contentDescription = "Achievement icon",
                 Modifier
                     .size(80.dp)
                     .padding(10.dp)
                     .clickable {
                         Toast
-                            .makeText(context, "Achievement 1", Toast.LENGTH_SHORT)
+                            .makeText(context, achievementDesc[0], Toast.LENGTH_SHORT)
                             .show()
                     }
             )
 
             Image(
                 painter = painterResource(id = achievementSrc[achievementImages[1]]),
-                contentDescription = "Temp icon - change it when you deploy a game",
+                contentDescription = "Achievement icon",
                 Modifier
                     .size(80.dp)
                     .padding(10.dp)
                     .clickable {
                         Toast
-                            .makeText(context, "Achievement 2", Toast.LENGTH_SHORT)
+                            .makeText(context, achievementDesc[1], Toast.LENGTH_SHORT)
                             .show()
                     }
             )
 
             Image(
                 painter = painterResource(id = achievementSrc[achievementImages[2]]),
-                contentDescription = "Temp icon - change it when you deploy a game",
+                contentDescription = "Achievement icon",
                 Modifier
                     .size(80.dp)
                     .padding(10.dp)
                     .clickable {
                         Toast
-                            .makeText(context, "Achievement 3", Toast.LENGTH_SHORT)
+                            .makeText(context, achievementDesc[2], Toast.LENGTH_SHORT)
                             .show()
                     }
             )
@@ -210,6 +210,12 @@ fun GameScroll() {
         listOf("m1", "m2", "m3"),
     )
 
+    val achievementDesc = listOf(
+        listOf("d1", "d2", "d3"),
+        listOf("d1", "d2", "d3"),
+        listOf("Win a game with at least 10 mines", "Win a game with at least 15 mines", "Win a game with at least 20 mines"),
+    )
+
     val classes = listOf(
         SnakeActivity::class.java,
         ArkanoidActivity::class.java,
@@ -223,6 +229,7 @@ fun GameScroll() {
             title = titles[page],
             achievementSrc = achievements[page],
             achievementNames = achievementNames[page],
+            achievementDesc = achievementDesc[page],
             activity = classes[page]
         )
     }
