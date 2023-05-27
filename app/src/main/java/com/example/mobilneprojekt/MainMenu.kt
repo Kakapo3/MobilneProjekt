@@ -168,6 +168,7 @@ fun GameScroll() {
     val images = listOf(
         R.drawable.game_icon_temp,
         R.drawable.game_icon_arkanoid,
+        R.drawable.game_icon_minesweeper
     )
     val titles = listOf(
         "Snake",
