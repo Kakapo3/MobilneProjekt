@@ -97,11 +97,6 @@ class GameView(private val context: Context, attrs: AttributeSet?) : View(
             for (i in 0 until sumpipe) {
                 if (bird!!.rect!!.intersect(arrPipes[i].rect!!) || bird!!.y - bird!!.height < 0 || bird!!.y > Constants.SCREEN_HEIGHT
                 ) {
-                    Pipe.Companion.speed = 0
-                    FlappyBirdActivity.Companion.txt_score_over!!.setText(FlappyBirdActivity.Companion.txt_score!!.getText())
-                    FlappyBirdActivity.Companion.txt_best_score!!.setText("best: $bestScore")
-                    FlappyBirdActivity.Companion.txt_score!!.setVisibility(INVISIBLE)
-                    FlappyBirdActivity.Companion.rl_game_over!!.setVisibility(VISIBLE)
                     if(score>=5){
                         achievementCompleted("fb1")
                     }
@@ -110,7 +105,13 @@ class GameView(private val context: Context, attrs: AttributeSet?) : View(
                     }
                     if(score>=15){
                         achievementCompleted("fb3")
-                    }
+                    }                    
+                    Pipe.Companion.speed = 0
+                    FlappyBirdActivity.Companion.txt_score_over!!.setText(FlappyBirdActivity.Companion.txt_score!!.getText())
+                    FlappyBirdActivity.Companion.txt_best_score!!.setText("best: $bestScore")
+                    FlappyBirdActivity.Companion.txt_score!!.setVisibility(INVISIBLE)
+                    FlappyBirdActivity.Companion.rl_game_over!!.setVisibility(VISIBLE)
+
                 }
                 if (bird!!.x + bird!!.width > arrPipes[i].x + arrPipes[i].width / 2 && bird!!.x + bird!!.width <= arrPipes[i].x + arrPipes[i].width / 2 + Pipe.Companion.speed && i < sumpipe / 2) {
                     score++
