@@ -19,11 +19,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mobilneprojekt.FriendsList
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import java.util.logging.Logger
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SnakeMultiplayer(snakeViewModel: SnakeViewModel, navController: NavController) {
+    val db = snakeViewModel.db
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -53,7 +56,11 @@ fun SnakeMultiplayer(snakeViewModel: SnakeViewModel, navController: NavControlle
                     navController.navigateUp()
                     Logger.getLogger("SnakeMultiplayer").warning("Game ended")
                     dialogText.value = if (b && !a) "Wygrałeś!" else if (!b) "Przegrałeś!" else "Remis!"
+                    if (b && !a) {
+                        db.getReference("accounts/${Firebase.auth.currentUser?.uid}/achievements/snake2").setValue(true)
+                    }
                     openDialog.value = true
+
                     true} else false},
                 {dialogText.value = it; openDialog.value = true},
                 context

@@ -68,7 +68,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.arkanoid.ArkanoidActivity
+import com.example.mobilneprojekt.arkanoid.ArkanoidActivity
 import com.example.mobilneprojekt.minesweeper.ChooseMinesActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.example.mobilneprojekt.theme.Typography
@@ -100,7 +100,6 @@ fun MakeGameRow(title: String) {
     }
 }
 
-@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: List<String>, title: String, activity: Class<out ComponentActivity>) {
     val context = LocalContext.current
@@ -204,7 +203,7 @@ fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: Li
 @ExperimentalFoundationApi
 fun GameScroll() {
     val images = listOf(
-        R.drawable.game_icon_temp,
+        R.drawable.snake_svgrepo_com,
         R.drawable.game_icon_arkanoid,
         R.drawable.game_icon_minesweeper
     )
@@ -215,13 +214,13 @@ fun GameScroll() {
     )
 
     val achievements = listOf(
-        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
+        listOf(R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24, R.drawable.baseline_star_24, R.drawable.baseline_star_24),
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
     )
 
     val achievementNames = listOf(
-        listOf("a1", "a2", "a3"),
+        listOf("snake1", "snake2", "snake3"),
         listOf("a1", "a2", "a3"),
         listOf("m1", "m2", "m3"),
     )

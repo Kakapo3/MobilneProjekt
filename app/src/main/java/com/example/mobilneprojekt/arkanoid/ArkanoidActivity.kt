@@ -1,4 +1,4 @@
-package com.example.arkanoid
+package com.example.mobilneprojekt.arkanoid
 
 import android.content.Context
 import android.graphics.Canvas
