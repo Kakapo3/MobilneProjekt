@@ -67,6 +67,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.arkanoid.ArkanoidActivity
 import com.example.mobilneprojekt.minesweeper.MinesweeperActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
+import com.example.mobilneprojekt.sudoku.view.DifficultyActivity
 import com.example.mobilneprojekt.theme.Typography
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -168,19 +169,22 @@ fun GameScroll() {
     val images = listOf(
         R.drawable.game_icon_temp,
         R.drawable.game_icon_arkanoid,
-        R.drawable.game_icon_minesweeper
+        R.drawable.game_icon_minesweeper,
+        R.drawable.sudoku_icon
     )
     val titles = listOf(
         "Snake",
         "Arkanoid",
-        "Minesweeper"
+        "Minesweeper",
+        "Sudoku"
     )
     val classes = listOf(
         SnakeActivity::class.java,
         ArkanoidActivity::class.java,
-        MinesweeperActivity::class.java
+        MinesweeperActivity::class.java,
+        DifficultyActivity::class.java
     )
-    HorizontalPager(pageCount = 3
+    HorizontalPager(pageCount = 4
     ) { page ->
         MakeGameColumn(
             imgSrc = images[page],
