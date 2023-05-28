@@ -38,6 +38,7 @@
             android:name=".flappybird.FlappyBirdActivity"
             android:exported="false"
             android:label="FlappyBird"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MobilneProjekt"/>
         <activity
             android:name=".sudoku.view.DifficultyActivity"
