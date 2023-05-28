@@ -233,8 +233,8 @@ fun GameScroll() {
         listOf("snake1", "snake2", "snake3"),
         listOf("arkanoid1", "arkanoid2", "arkanoid3"),
         listOf("m1", "m2", "m3"),
-        listOf("fb1", "fb2", "fb3"),
-        listOf("s1", "s2", "s3")
+        listOf("s1", "s2", "s3"),
+        listOf("fb1", "fb2", "fb3")
     )
 
     val achievementDesc = listOf(
