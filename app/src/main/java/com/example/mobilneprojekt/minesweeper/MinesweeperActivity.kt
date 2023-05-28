@@ -15,6 +15,9 @@ import android.widget.Toast
 import com.example.minesweeper.Field
 import com.example.mobilneprojekt.MainActivity
 import com.example.mobilneprojekt.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlin.random.Random
 
 class MinesweeperActivity : AppCompatActivity() {
@@ -26,9 +29,12 @@ class MinesweeperActivity : AppCompatActivity() {
         restart()
     }
 
+    var mines = 10 //default
+
     private fun restart() {
         val fields = createBoard(9, 9)
-        addBombs(fields, 10)
+        mines = maxOf(minOf(intent.getIntExtra("mines", 10), 50), 5)
+        addBombs(fields, mines)
         addFunctionality(fields)
         setupFlagButton()
         updateRemainingBombs(fields)
@@ -226,6 +232,18 @@ class MinesweeperActivity : AppCompatActivity() {
             }
         }
 
+        if(mines >= 10) {
+            achievementCompleted("m1")
+        }
+
+        if(mines >= 15) {
+            achievementCompleted("m2")
+        }
+
+        if(mines >= 20) {
+            achievementCompleted("m3")
+        }
+
         return true
     }
 
@@ -233,4 +251,12 @@ class MinesweeperActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
+
+    val db = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
+
+    fun achievementCompleted(name: String) { val currUser = Firebase.auth.currentUser?.uid
+        db.getReference("accounts/${currUser}/achievements/${name}").setValue(true)
+    }
+
+
 }
