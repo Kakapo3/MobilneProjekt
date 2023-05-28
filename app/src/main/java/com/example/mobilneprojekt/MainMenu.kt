@@ -68,6 +68,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.arkanoid.ArkanoidActivity
+import com.example.mobilneprojekt.flappybird.FlappyBirdActivity
 import com.example.mobilneprojekt.minesweeper.ChooseMinesActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.example.mobilneprojekt.theme.Typography
@@ -190,36 +191,42 @@ fun GameScroll() {
     val images = listOf(
         R.drawable.game_icon_temp,
         R.drawable.game_icon_arkanoid,
-        R.drawable.game_icon_minesweeper
+        R.drawable.game_icon_minesweeper,
+        R.drawable.flappybird_background
     )
     val titles = listOf(
         "Snake",
         "Arkanoid",
-        "Minesweeper"
+        "Minesweeper",
+        "FlappyBird"
     )
 
     val achievements = listOf(
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
+        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp)
     )
 
     val achievementNames = listOf(
         listOf("a1", "a2", "a3"),
         listOf("a1", "a2", "a3"),
         listOf("m1", "m2", "m3"),
+        listOf("fb1", "fb2", "fb3"),
     )
 
     val achievementDesc = listOf(
         listOf("d1", "d2", "d3"),
         listOf("d1", "d2", "d3"),
         listOf("Win a game with at least 10 mines", "Win a game with at least 15 mines", "Win a game with at least 20 mines"),
+        listOf("d1", "d2", "d3"),
     )
 
     val classes = listOf(
         SnakeActivity::class.java,
         ArkanoidActivity::class.java,
-        ChooseMinesActivity::class.java
+        ChooseMinesActivity::class.java,
+        FlappyBirdActivity::class.java
     )
 
     HorizontalPager(pageCount = 3
