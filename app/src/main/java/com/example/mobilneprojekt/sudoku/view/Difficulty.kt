@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.mobilneprojekt.MainActivity
 import com.example.mobilneprojekt.R
 
 class DifficultyActivity : AppCompatActivity() {
@@ -23,7 +24,8 @@ class DifficultyActivity : AppCompatActivity() {
         R.color.lightGreen,
         R.color.mediumGreen,
         R.color.darkGreen,
-        R.color.darkerGreen
+        R.color.darkerGreen,
+        R.color.darkestGreen
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +36,7 @@ class DifficultyActivity : AppCompatActivity() {
         val buttonMedium = findViewById<Button>(R.id.buttonMedium)
         val buttonHard = findViewById<Button>(R.id.buttonHard)
         val buttonExpert = findViewById<Button>(R.id.buttonExpert)
+        val exitButton = findViewById<Button>(R.id.exitSudoku)
 
         val descriptionEasy = findViewById<TextView>(R.id.descriptionEasy)
         val descriptionMedium = findViewById<TextView>(R.id.descriptionMedium)
@@ -44,6 +47,7 @@ class DifficultyActivity : AppCompatActivity() {
         buttonMedium.setOnClickListener { startMainActivity("Medium") }
         buttonHard.setOnClickListener { startMainActivity("Hard") }
         buttonExpert.setOnClickListener { startMainActivity("Expert") }
+        exitButton.setOnClickListener {onCloseGame()}
 
         letterViews = listOf(
             findViewById(R.id.letterS),
@@ -131,6 +135,14 @@ class DifficultyActivity : AppCompatActivity() {
         val intent = Intent(this, PlaySudokuActivity::class.java)
         intent.putExtra("Difficulty", difficulty)
         startActivity(intent)
+    }
+
+    private fun onCloseGame() {
+
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
     }
 
 }

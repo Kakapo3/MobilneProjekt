@@ -71,6 +71,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.arkanoid.ArkanoidActivity
 import com.example.mobilneprojekt.minesweeper.ChooseMinesActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
+import com.example.mobilneprojekt.sudoku.view.DifficultyActivity
 import com.example.mobilneprojekt.theme.Typography
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -206,33 +207,38 @@ fun GameScroll() {
     val images = listOf(
         R.drawable.game_icon_temp,
         R.drawable.game_icon_arkanoid,
-        R.drawable.game_icon_minesweeper
+        R.drawable.game_icon_minesweeper,
+        R.drawable.sudoku_icon
     )
     val titles = listOf(
         "Snake",
         "Arkanoid",
-        "Minesweeper"
+        "Minesweeper",
+        "Sudoku"
     )
 
     val achievements = listOf(
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
-    )
+        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp)
+        )
 
     val achievementNames = listOf(
         listOf("a1", "a2", "a3"),
         listOf("a1", "a2", "a3"),
         listOf("m1", "m2", "m3"),
+        listOf("first_game", "under_10", "under_5")
     )
 
     val classes = listOf(
         SnakeActivity::class.java,
         ArkanoidActivity::class.java,
-        ChooseMinesActivity::class.java
+        ChooseMinesActivity::class.java,
+        DifficultyActivity::class.java
     )
 
-    HorizontalPager(pageCount = 3
+    HorizontalPager(pageCount = 4
     ) { page ->
         MakeGameColumn(
             imgSrc = images[page],

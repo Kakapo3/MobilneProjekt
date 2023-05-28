@@ -172,5 +172,13 @@
             android:text="No w końcu :)"
             android:textColor="@color/darkerGreen"
             android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/exitSudoku"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Exit"
+            android:backgroundTint="@color/darkestGreen"
+            android:layout_marginTop="20dp"/>
     </LinearLayout>
 </RelativeLayout>
