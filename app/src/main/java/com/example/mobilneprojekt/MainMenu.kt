@@ -70,7 +70,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.arkanoid.ArkanoidActivity
 import com.example.arkanoid.ArkanoidMenuActivity
-import com.example.arkanoid.ArkanoidMenuActivity
 import com.example.mobilneprojekt.minesweeper.ChooseMinesActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.example.mobilneprojekt.sudoku.view.DifficultyActivity
