@@ -157,7 +157,7 @@ class GameView(private val context: Context, attrs: AttributeSet?) : View(
         initPipe()
     }
 
-    val db = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedfatabase.app/")
+    val db = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
 
     fun achievementCompleted(name:String){
         val currUser = Firebase.auth.currentUser?.uid
