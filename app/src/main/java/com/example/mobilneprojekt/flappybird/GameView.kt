@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.os.Handler
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.example.mobilneprojekt.MainActivity
@@ -161,5 +162,6 @@ class GameView(private val context: Context, attrs: AttributeSet?) : View(
     fun achievementCompleted(name:String){
         val currUser = Firebase.auth.currentUser?.uid
         db.getReference("accounts/${currUser}/achievements/${name}").setValue(true)
+        Log.d("Dziala?","dziala")
     }
 }

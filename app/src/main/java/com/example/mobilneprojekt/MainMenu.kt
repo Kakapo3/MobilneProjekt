@@ -205,7 +205,7 @@ fun GameScroll() {
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
-        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.flappybird_icon, R.drawable.flappybird_icon, R.drawable.minesweeper_achievement_3)
+        listOf(R.drawable.flappybird_not_completed, R.drawable.flappybird_not_completed, R.drawable.flappybird_not_completed, R.drawable.flappybird_achievement_1, R.drawable.flappybird_achievement_2, R.drawable.flappybird_achievement_3)
     )
 
     val achievementNames = listOf(
