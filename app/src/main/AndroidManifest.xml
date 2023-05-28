@@ -22,6 +22,7 @@
             android:name=".minesweeper.ChooseMinesActivity"
             android:exported="false"
             android:label="Minesweeper"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MobilneProjekt" />
         <activity
             android:name=".minesweeper.MinesweeperActivity"
@@ -34,7 +35,6 @@
             android:label="SnakeActivity"
             android:theme="@style/Theme.MobilneProjekt" />
         <activity
-
             android:name=".flappybird.FlappyBirdActivity"
             android:exported="false"
             android:label="FlappyBird"
