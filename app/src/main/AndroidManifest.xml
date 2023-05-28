@@ -28,6 +28,7 @@
             android:name=".minesweeper.MinesweeperActivity"
             android:exported="false"
             android:label="Minesweeper"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.MobilneProjekt" />
         <activity
             android:name=".snake.SnakeActivity"
