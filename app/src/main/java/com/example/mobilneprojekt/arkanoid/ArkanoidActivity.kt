@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.mobilneprojekt.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlin.math.abs
 
 
@@ -266,6 +269,15 @@ class ArkanoidActivity : ComponentActivity() {
 
                 if (score == numBricks * 10) {
                     paint.textSize = 90f
+                    if (levelNumber == 0){
+                        achievementCompleted("arkanoid1")
+                    }
+                    else if (levelNumber == 1) {
+                        achievementCompleted("arkanoid2")
+                    }
+                    else if (levelNumber == 2) {
+                        achievementCompleted("arkanoid3")
+                    }
                     canvas.drawText("You won!", (screenX / 4).toFloat(), (screenY / 2).toFloat(), paint)
                 }
 
@@ -337,5 +349,11 @@ class ArkanoidActivity : ComponentActivity() {
         super.onPause()
 
         arkanoidView!!.pause()
+    }
+
+    val db = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
+
+    fun achievementCompleted(name: String) { val currUser = Firebase.auth.currentUser?.uid
+        db.getReference("accounts/${currUser}/achievements/${name}").setValue(true)
     }
 }
