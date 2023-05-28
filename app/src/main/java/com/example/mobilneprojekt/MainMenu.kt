@@ -69,8 +69,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mobilneprojekt.arkanoid.ArkanoidActivity
+import com.example.mobilneprojekt.arkanoid.ArkanoidMenuActivity
 import com.example.mobilneprojekt.minesweeper.ChooseMinesActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
+import com.example.mobilneprojekt.sudoku.view.DifficultyActivity
 import com.example.mobilneprojekt.theme.Typography
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -212,7 +214,8 @@ fun GameScroll() {
     val titles = listOf(
         "Snake",
         "Arkanoid",
-        "Minesweeper"
+        "Minesweeper",
+        "Sudoku"
     )
 
     val achievements = listOf(
@@ -227,12 +230,6 @@ fun GameScroll() {
         listOf("arkanoid1", "arkanoid2", "arkanoid3"),
         listOf("m1", "m2", "m3"),
         listOf("first_game", "under_10", "under_5")
-    )
-
-    val achievementDesc = listOf(
-        listOf("d1", "d2", "d3"),
-        listOf("You have beaten the first level", "You have beaten the second level", "You have beaten the third level"),
-        listOf("Win a game with at least 10 mines", "Win a game with at least 15 mines", "Win a game with at least 20 mines"),
     )
 
     val classes = listOf(
