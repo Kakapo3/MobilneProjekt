@@ -78,7 +78,10 @@ fun hostMultiplayerGame(
                     )
                 ),
                 onGameEnded,
-                { Logger.getLogger("SnakeMultiplayer").warning("Eated food") },
+                {
+                    Logger.getLogger("SnakeMultiplayer").warning("Eated food")
+                    snakeViewModel.db.getReference("accounts/${Firebase.auth.currentUser?.uid}/achievements/snake1").setValue(true)
+                },
                 onError,
                 Firebase.auth.currentUser?.uid!!,
                 Firebase.auth.currentUser?.uid!!,
@@ -174,7 +177,10 @@ fun connectToMultiplayerGame(
                             )
                         ),
                         onGameEnded,
-                        { Logger.getLogger("SnakeMultiplayer").warning("Eated food") },
+                        {
+                            Logger.getLogger("SnakeMultiplayer").warning("Eated food")
+                            snakeViewModel.db.getReference("accounts/${Firebase.auth.currentUser?.uid}/achievements/snake1").setValue(true)
+                        },
                         onError,
                         opponentId,
                         Firebase.auth.currentUser?.uid!!,

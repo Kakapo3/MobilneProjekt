@@ -1,5 +1,6 @@
 package com.example.mobilneprojekt
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
@@ -49,13 +50,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -64,12 +68,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.arkanoid.ArkanoidActivity
-import com.example.arkanoid.ArkanoidMenuActivity
+import com.example.mobilneprojekt.arkanoid.ArkanoidActivity
+import com.example.mobilneprojekt.arkanoid.ArkanoidMenuActivity
+import com.example.mobilneprojekt.minesweeper.ChooseMinesActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
+import com.example.mobilneprojekt.sudoku.view.DifficultyActivity
 import com.example.mobilneprojekt.theme.Typography
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.logging.Logger
 
@@ -94,9 +102,11 @@ fun MakeGameRow(title: String) {
     }
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
-fun MakeGameColumn(imgSrc : Int, title: String, activity: Class<out ComponentActivity>) {
+fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: List<String>, title: String, activity: Class<out ComponentActivity>) {
     val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -119,42 +129,72 @@ fun MakeGameColumn(imgSrc : Int, title: String, activity: Class<out ComponentAct
             fontSize = 60.sp
         )
 
+        val db = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedatabase.app/")
         Row() {
+            var achievementImages by remember { mutableStateOf(mutableListOf(0, 0, 0)) }
+            val currUser = Firebase.auth.currentUser?.uid
+
+            db.getReference("accounts/${currUser}/achievements").get().addOnSuccessListener { a ->
+                var currAchiv = 0
+                for (achievement in achievementNames) {
+                    val newImages = achievementImages.toMutableList()
+                    if (a.hasChild(achievement)) {
+                        newImages[currAchiv] = currAchiv + 3
+                    } else {
+                        newImages[currAchiv] = currAchiv
+                    }
+                    achievementImages = newImages
+                    currAchiv += 1
+                }
+            }
+
+            val achievementDesc = mutableListOf("", "", "")
+
+            db.getReference("${title.lowercase()}/achievements").get().addOnSuccessListener { a ->
+                var currAchiv = 0
+                for (achivement in a.children) {
+                    achievementDesc[currAchiv] = achivement.child("description").value.toString()
+                    currAchiv += 1
+                }
+            }
+
+
+
             Image(
-                painter = painterResource(id = R.drawable.game_icon_temp),
-                contentDescription = "Temp icon - change it when you deploy a game",
+                painter = painterResource(id = achievementSrc[achievementImages[0]]),
+                contentDescription = "Achievement icon",
                 Modifier
                     .size(80.dp)
                     .padding(10.dp)
                     .clickable {
                         Toast
-                            .makeText(context, "Achievement 1", Toast.LENGTH_SHORT)
+                            .makeText(context, achievementDesc[0], Toast.LENGTH_SHORT)
                             .show()
                     }
             )
 
             Image(
-                painter = painterResource(id = R.drawable.game_icon_temp),
-                contentDescription = "Temp icon - change it when you deploy a game",
+                painter = painterResource(id = achievementSrc[achievementImages[1]]),
+                contentDescription = "Achievement icon",
                 Modifier
                     .size(80.dp)
                     .padding(10.dp)
                     .clickable {
                         Toast
-                            .makeText(context, "Achievement 2", Toast.LENGTH_SHORT)
+                            .makeText(context, achievementDesc[1], Toast.LENGTH_SHORT)
                             .show()
                     }
             )
 
             Image(
-                painter = painterResource(id = R.drawable.game_icon_temp),
-                contentDescription = "Temp icon - change it when you deploy a game",
+                painter = painterResource(id = achievementSrc[achievementImages[2]]),
+                contentDescription = "Achievement icon",
                 Modifier
                     .size(80.dp)
                     .padding(10.dp)
                     .clickable {
                         Toast
-                            .makeText(context, "Achievement 3", Toast.LENGTH_SHORT)
+                            .makeText(context, achievementDesc[2], Toast.LENGTH_SHORT)
                             .show()
                     }
             )
@@ -166,22 +206,46 @@ fun MakeGameColumn(imgSrc : Int, title: String, activity: Class<out ComponentAct
 @ExperimentalFoundationApi
 fun GameScroll() {
     val images = listOf(
-        R.drawable.game_icon_temp,
+        R.drawable.snake_svgrepo_com,
         R.drawable.game_icon_arkanoid,
+        R.drawable.game_icon_minesweeper,
+        R.drawable.sudoku_icon
     )
     val titles = listOf(
         "Snake",
         "Arkanoid",
+        "Minesweeper",
+        "Sudoku"
     )
+
+    val achievements = listOf(
+        listOf(R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24, R.drawable.baseline_star_24, R.drawable.baseline_star_24),
+        listOf(R.drawable.arkanoid1_achievement_greyed, R.drawable.arkanoid2_achievement_greyed, R.drawable.arkanoid3_achievement_greyed, R.drawable.arkanoid1_achievement, R.drawable.arkanoid2_achievement, R.drawable.arkanoid3_achievement),
+        listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
+        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp)
+        )
+
+    val achievementNames = listOf(
+        listOf("snake1", "snake2", "snake3"),
+        listOf("arkanoid1", "arkanoid2", "arkanoid3"),
+        listOf("m1", "m2", "m3"),
+        listOf("first_game", "under_10", "under_5")
+    )
+
     val classes = listOf(
         SnakeActivity::class.java,
         ArkanoidMenuActivity::class.java,
+        ChooseMinesActivity::class.java,
+        DifficultyActivity::class.java
     )
-    HorizontalPager(pageCount = 2
+
+    HorizontalPager(pageCount = 4
     ) { page ->
         MakeGameColumn(
             imgSrc = images[page],
             title = titles[page],
+            achievementSrc = achievements[page],
+            achievementNames = achievementNames[page],
             activity = classes[page]
         )
     }

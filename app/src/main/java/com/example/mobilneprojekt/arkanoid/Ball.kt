@@ -1,4 +1,4 @@
-package com.example.arkanoid
+package com.example.mobilneprojekt.arkanoid
 
 import android.graphics.RectF
 import java.util.*

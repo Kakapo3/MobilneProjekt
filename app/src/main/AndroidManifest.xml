@@ -19,9 +19,29 @@
         android:theme="@style/Theme.MobilneProjekt"
         tools:targetApi="31">
         <activity
+            android:name=".minesweeper.ChooseMinesActivity"
+            android:exported="false"
+            android:label="Minesweeper"
+            android:theme="@style/Theme.MobilneProjekt" />
+        <activity
+            android:name=".minesweeper.MinesweeperActivity"
+            android:exported="false"
+            android:label="Minesweeper"
+            android:theme="@style/Theme.MobilneProjekt" />
+        <activity
             android:name=".snake.SnakeActivity"
             android:exported="false"
             android:label="SnakeActivity"
+            android:theme="@style/Theme.MobilneProjekt" />
+        <activity
+            android:name=".sudoku.view.DifficultyActivity"
+            android:exported="false"
+            android:label="DifficultyActivity"
+            android:theme="@style/Theme.MobilneProjekt" />
+        <activity
+            android:name=".sudoku.view.PlaySudokuActivity"
+            android:exported="false"
+            android:label="PlaySudokuActivity"
             android:theme="@style/Theme.MobilneProjekt" />
         <activity
             android:name=".MainActivity"
@@ -33,7 +53,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.arkanoid.ArkanoidMenuActivity"
+            android:name=".arkanoid.ArkanoidMenuActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
@@ -44,14 +64,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.arkanoid.ArkanoidActivity"
-            android:parentActivityName="com.example.arkanoid.ArkanoidMenuActivity"
+            android:name=".arkanoid.ArkanoidActivity"
+            android:parentActivityName=".arkanoid.ArkanoidMenuActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:screenOrientation="landscape" />
         <service
             android:name=".firebase.MyFirebaseMessagingService"
             android:exported="false"
-            android:stopWithTask="false"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
