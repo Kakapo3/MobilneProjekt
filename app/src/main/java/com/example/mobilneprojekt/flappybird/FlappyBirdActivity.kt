@@ -9,6 +9,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mobilneprojekt.MainActivity
 import com.example.mobilneprojekt.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class FlappyBirdActivity : AppCompatActivity() {
     private var gv: GameView? = null

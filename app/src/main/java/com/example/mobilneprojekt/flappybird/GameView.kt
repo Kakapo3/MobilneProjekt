@@ -10,6 +10,9 @@ import android.view.MotionEvent
 import android.view.View
 import com.example.mobilneprojekt.MainActivity
 import com.example.mobilneprojekt.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class GameView(private val context: Context, attrs: AttributeSet?) : View(
     context, attrs
@@ -64,7 +67,7 @@ class GameView(private val context: Context, attrs: AttributeSet?) : View(
                         arrPipes[i - sumpipe / 2].y
                                 + arrPipes[i - sumpipe / 2].height + distance,
                         200 * Constants.SCREEN_WIDTH / 1080,
-                        Constants.SCREEN_HEIGHT/1920
+                        Constants.SCREEN_HEIGHT/2
                     )
                 )
                 arrPipes[arrPipes.size - 1].bm=BitmapFactory.decodeResource(
@@ -98,6 +101,15 @@ class GameView(private val context: Context, attrs: AttributeSet?) : View(
                     FlappyBirdActivity.Companion.txt_best_score!!.setText("best: $bestScore")
                     FlappyBirdActivity.Companion.txt_score!!.setVisibility(INVISIBLE)
                     FlappyBirdActivity.Companion.rl_game_over!!.setVisibility(VISIBLE)
+                    if(score>=5){
+                        achievementCompleted("fb1")
+                    }
+                    if(score>=10){
+                        achievementCompleted("fb2")
+                    }
+                    if(score>=15){
+                        achievementCompleted("fb3")
+                    }
                 }
                 if (bird!!.x + bird!!.width > arrPipes[i].x + arrPipes[i].width / 2 && bird!!.x + bird!!.width <= arrPipes[i].x + arrPipes[i].width / 2 + Pipe.Companion.speed && i < sumpipe / 2) {
                     score++
@@ -142,5 +154,12 @@ class GameView(private val context: Context, attrs: AttributeSet?) : View(
         score = 0
         initBird()
         initPipe()
+    }
+
+    val db = Firebase.database("https://projekt-mobilki-aa7ab-default-rtdb.europe-west1.firebasedfatabase.app/")
+
+    fun achievementCompleted(name:String){
+        val currUser = Firebase.auth.currentUser?.uid
+        db.getReference("accounts/${currUser}/achievements/${name}").setValue(true)
     }
 }

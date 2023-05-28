@@ -192,7 +192,7 @@ fun GameScroll() {
         R.drawable.game_icon_temp,
         R.drawable.game_icon_arkanoid,
         R.drawable.game_icon_minesweeper,
-        R.drawable.flappybird_background
+        R.drawable.flappybird_icon
     )
     val titles = listOf(
         "Snake",
@@ -205,21 +205,21 @@ fun GameScroll() {
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
-        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp)
+        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.flappybird_icon, R.drawable.flappybird_icon, R.drawable.minesweeper_achievement_3)
     )
 
     val achievementNames = listOf(
         listOf("a1", "a2", "a3"),
         listOf("a1", "a2", "a3"),
         listOf("m1", "m2", "m3"),
-        listOf("fb1", "fb2", "fb3"),
+        listOf("fb1", "fb2", "fb3")
     )
 
     val achievementDesc = listOf(
         listOf("d1", "d2", "d3"),
         listOf("d1", "d2", "d3"),
         listOf("Win a game with at least 10 mines", "Win a game with at least 15 mines", "Win a game with at least 20 mines"),
-        listOf("d1", "d2", "d3"),
+        listOf("get 5 points", "get 10 points", "get 15 points")
     )
 
     val classes = listOf(
@@ -229,7 +229,7 @@ fun GameScroll() {
         FlappyBirdActivity::class.java
     )
 
-    HorizontalPager(pageCount = 3
+    HorizontalPager(pageCount = 4
     ) { page ->
         MakeGameColumn(
             imgSrc = images[page],
