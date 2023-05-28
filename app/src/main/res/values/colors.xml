@@ -7,6 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
     <color name="red_block">#de0000</color>
     <color name="light_red_block">#ff3c00</color>
     <color name="orange_block">#ff7700</color>
@@ -16,5 +17,13 @@
     <color name="paddle_sides">#ff0000</color>
     <color name="ball">#ffffff</color>
     <color name="background">#1a80b6</color>
+
+    <color name="lightGrey">#D3D3D3</color>
+    <color name="darkGrey">#5A5A5A</color>
+    <color name="lightGreen">#8BC34A</color>
+    <color name="mediumGreen">#689F38</color>
+    <color name="darkGreen">#4CAF50</color>
+    <color name="darkerGreen">#388E3C</color>
     <color name="green">#244F1E</color>
+    <color name="darkestGreen">#093614</color>
 </resources>

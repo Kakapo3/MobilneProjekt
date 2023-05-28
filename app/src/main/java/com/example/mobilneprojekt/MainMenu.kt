@@ -100,6 +100,7 @@ fun MakeGameRow(title: String) {
     }
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: List<String>, title: String, activity: Class<out ComponentActivity>) {
     val context = LocalContext.current
@@ -205,7 +206,8 @@ fun GameScroll() {
     val images = listOf(
         R.drawable.snake_svgrepo_com,
         R.drawable.game_icon_arkanoid,
-        R.drawable.game_icon_minesweeper
+        R.drawable.game_icon_minesweeper,
+        R.drawable.sudoku_icon
     )
     val titles = listOf(
         "Snake",
@@ -215,23 +217,32 @@ fun GameScroll() {
 
     val achievements = listOf(
         listOf(R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24, R.drawable.baseline_star_24, R.drawable.baseline_star_24),
-        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
+        listOf(R.drawable.arkanoid1_achievement_greyed, R.drawable.arkanoid2_achievement_greyed, R.drawable.arkanoid3_achievement_greyed, R.drawable.arkanoid1_achievement, R.drawable.arkanoid2_achievement, R.drawable.arkanoid3_achievement),
         listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
-    )
+        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp)
+        )
 
     val achievementNames = listOf(
         listOf("snake1", "snake2", "snake3"),
-        listOf("a1", "a2", "a3"),
+        listOf("arkanoid1", "arkanoid2", "arkanoid3"),
         listOf("m1", "m2", "m3"),
+        listOf("first_game", "under_10", "under_5")
+    )
+
+    val achievementDesc = listOf(
+        listOf("d1", "d2", "d3"),
+        listOf("You have beaten the first level", "You have beaten the second level", "You have beaten the third level"),
+        listOf("Win a game with at least 10 mines", "Win a game with at least 15 mines", "Win a game with at least 20 mines"),
     )
 
     val classes = listOf(
         SnakeActivity::class.java,
-        ArkanoidActivity::class.java,
-        ChooseMinesActivity::class.java
+        ArkanoidMenuActivity::class.java,
+        ChooseMinesActivity::class.java,
+        DifficultyActivity::class.java
     )
 
-    HorizontalPager(pageCount = 3
+    HorizontalPager(pageCount = 4
     ) { page ->
         MakeGameColumn(
             imgSrc = images[page],

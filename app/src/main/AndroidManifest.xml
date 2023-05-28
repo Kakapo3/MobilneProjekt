@@ -34,6 +34,16 @@
             android:label="SnakeActivity"
             android:theme="@style/Theme.MobilneProjekt" />
         <activity
+            android:name=".sudoku.view.DifficultyActivity"
+            android:exported="false"
+            android:label="DifficultyActivity"
+            android:theme="@style/Theme.MobilneProjekt" />
+        <activity
+            android:name=".sudoku.view.PlaySudokuActivity"
+            android:exported="false"
+            android:label="PlaySudokuActivity"
+            android:theme="@style/Theme.MobilneProjekt" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
