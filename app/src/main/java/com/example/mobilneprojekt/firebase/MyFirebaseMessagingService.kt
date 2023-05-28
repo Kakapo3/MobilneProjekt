@@ -12,10 +12,15 @@ import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.example.mobilneprojekt.Achievement
 import com.example.mobilneprojekt.MainActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -24,18 +29,8 @@ import java.util.logging.Logger
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
-    override fun onCreate() {
-        super.onCreate()
-        Logger.getLogger("FirebaseService").info("service created")
-        Logger.getLogger("FirebaseService").info("user: ${Firebase.auth.currentUser?.uid}")
-        Firebase.auth.addAuthStateListener {
-            Logger.getLogger("FirebaseService").info("user: ${Firebase.auth.currentUser?.uid}")
-        }
-    }
-
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        val a = FirebaseApp.getInstance()
         Logger.getLogger("FirebaseToken").info("token: $token")
 
     }

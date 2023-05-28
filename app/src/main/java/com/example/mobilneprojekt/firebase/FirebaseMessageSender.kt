@@ -19,6 +19,8 @@ class FirebaseMessageSender(app: Context) {
         Volley.newRequestQueue(app.applicationContext)
     }
 
+
+
     fun sendNotification(notification: JSONObject) {
         Log.e("TAG", "sendNotification")
         val jsonObjectRequest = object : JsonObjectRequest(FCM_API, notification,

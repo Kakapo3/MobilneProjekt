@@ -1,4 +1,4 @@
-package com.example.arkanoid
+package com.example.mobilneprojekt.arkanoid
 
 import android.content.Intent
 import android.os.Bundle

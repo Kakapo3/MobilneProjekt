@@ -2,14 +2,24 @@ package com.example.mobilneprojekt
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ContentResolver
 import android.content.ContentUris
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.media.RingtoneManager
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import coil.request.ImageRequest
 import com.example.mobilneprojekt.firebase.FirebaseMessageSender
@@ -21,6 +31,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.Random
 import java.util.logging.Logger
 import kotlin.concurrent.thread
 
@@ -42,6 +53,7 @@ class MainMenuViewModel(val app: Application) : AndroidViewModel(app) {
     val achievements = mutableStateListOf<String>()
     val achievementList = HashMap<String, Achievement>()
     val games = listOf("arkanoid", "snake", "minesweeper")
+    private val ADMIN_CHANNEL_ID = "admin_channel"
 
     private var maxCount = 20
     init {
@@ -65,15 +77,15 @@ class MainMenuViewModel(val app: Application) : AndroidViewModel(app) {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                TODO("Not yet implemented")
+                Logger.getLogger("Achievemet").info("Changed ${snapshot.key.toString()}")
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                TODO("Not yet implemented")
+                Logger.getLogger("Achievemet").info("Removed ${snapshot.key.toString()}")
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                TODO("Not yet implemented")
+                Logger.getLogger("Achievemet").info("Moved ${snapshot.key.toString()}")
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -157,6 +169,52 @@ class MainMenuViewModel(val app: Application) : AndroidViewModel(app) {
                 Log.d("invites", "onCancelled: ${error.message}")
             }
         }
+        val achievmentListener = object : ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                Logger.getLogger("Achievemet").info("Added ${snapshot.key.toString()}")
+                val key = snapshot.key.toString()
+
+                val notificationManager = app.applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                val notificationID = Random().nextInt(3000)
+
+                /*
+                Apps targeting SDK 26 or above (Android O) must implement notification channels and add its notifications
+                to at least one of them.
+                */
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    setupChannels(notificationManager)
+                }
+
+                val notificationSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                val notificationBuilder = NotificationCompat.Builder(app.applicationContext, ADMIN_CHANNEL_ID)
+                    .setContentTitle(achievementList[key]?.title)
+                    .setContentText(achievementList[key]?.description)
+                    .setSmallIcon(app.applicationContext.resources.getIdentifier("ic_launcher", "mipmap", app.applicationContext.packageName))
+                    .setAutoCancel(true)
+                    .setSound(notificationSoundUri)
+                    .setChannelId(ADMIN_CHANNEL_ID)
+
+                //Set notification color to match your app color template
+                notificationManager.notify(notificationID, notificationBuilder.build())
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Logger.getLogger("FirebaseService").info("changed child")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Logger.getLogger("FirebaseService").info("removed child")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        }
         if (auth.currentUser != null) {
             db.getReference("accounts/${Firebase.auth.currentUser?.uid}/name").get()
                 .addOnSuccessListener {
@@ -173,6 +231,8 @@ class MainMenuViewModel(val app: Application) : AndroidViewModel(app) {
                 db.getReference("accounts/${Firebase.auth.currentUser?.uid}/invites")
                     .removeEventListener(inviteListener)
                 db.getReference("accounts_list").removeEventListener(accountsListener)
+                db.getReference("accounts/${Firebase.auth.currentUser?.uid}/achievements").removeEventListener(achievmentListener)
+                Logger.getLogger("FirebaseService").info("removed child event listener")
             } else {
                 db.getReference("accounts/${Firebase.auth.currentUser?.uid}/name").get()
                     .addOnSuccessListener {
@@ -184,6 +244,7 @@ class MainMenuViewModel(val app: Application) : AndroidViewModel(app) {
                     .addChildEventListener(inviteListener)
                 db.getReference("accounts_list").addChildEventListener(accountsListener)
                 db.getReference("accounts/${Firebase.auth.currentUser?.uid}/achievements").addChildEventListener(achievementListener)
+                Logger.getLogger("FirebaseService").info("added child event listener")
             }
             updateImageRequest(
                 imageRequest = imageRequest,
@@ -192,6 +253,7 @@ class MainMenuViewModel(val app: Application) : AndroidViewModel(app) {
             updateUriItems()
         }
     }
+
 
 
 
@@ -242,5 +304,19 @@ class MainMenuViewModel(val app: Application) : AndroidViewModel(app) {
             type = "invite",
             params = mapOf()
         )
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private fun setupChannels(notificationManager: NotificationManager?) {
+        val adminChannelName = "New notification"
+        val adminChannelDescription = "Device to devie notification"
+
+        val adminChannel =
+            NotificationChannel(ADMIN_CHANNEL_ID, adminChannelName, NotificationManager.IMPORTANCE_HIGH)
+        adminChannel.description = adminChannelDescription
+        adminChannel.enableLights(true)
+        adminChannel.lightColor = Color.RED
+        adminChannel.enableVibration(true)
+        notificationManager?.createNotificationChannel(adminChannel)
     }
 }

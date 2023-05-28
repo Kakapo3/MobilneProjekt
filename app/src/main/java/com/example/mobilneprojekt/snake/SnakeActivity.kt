@@ -128,7 +128,10 @@ class SnakeActivity : ComponentActivity() {
                                                         score = 0
                                                     )),
                                                 onGameEnded = {(a,b) -> if(a || b) {navController.navigate("menu"); true} else false},
-                                                onFoodEaten = { Logger.getLogger("SnakeActivity").warning("Food eaten")},
+                                                onFoodEaten = {
+                                                    Logger.getLogger("SnakeActivity").warning("Food eaten")
+                                                    snakeViewModel.db.getReference("accounts/${Firebase.auth.currentUser?.uid}/achievements/snake1").setValue(true)
+                                                              },
                                                 hostingPlayerId = "a",
                                                 player1Id = "a",
                                                 snakeViewModel = snakeViewModel,
@@ -153,6 +156,7 @@ class SnakeActivity : ComponentActivity() {
 
                             val openDialog = remember { mutableStateOf(false) }
                             val dialogText = remember { mutableStateOf("") }
+                            val db = snakeViewModel.db
 
                             LaunchedEffect(Unit){
                                 try {
@@ -168,6 +172,9 @@ class SnakeActivity : ComponentActivity() {
                                                 runOnUiThread {
                                                     dialogText.value = if (b && !a) "Wygrałeś!" else if (!b) "Przegrałeś!" else "Remis!"
                                                     openDialog.value = true
+                                                }
+                                                if (b && !a) {
+                                                    db.getReference("accounts/${Firebase.auth.currentUser?.uid}/achievements/snake2").setValue(true)
                                                 }
                                                 true} else false},
                                             {

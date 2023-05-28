@@ -59,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -67,14 +68,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.arkanoid.ArkanoidActivity
 import com.example.mobilneprojekt.flappybird.FlappyBirdActivity
+import com.example.mobilneprojekt.arkanoid.ArkanoidActivity
+import com.example.mobilneprojekt.arkanoid.ArkanoidMenuActivity
 import com.example.mobilneprojekt.minesweeper.ChooseMinesActivity
 import com.example.mobilneprojekt.snake.SnakeActivity
+import com.example.mobilneprojekt.sudoku.view.DifficultyActivity
 import com.example.mobilneprojekt.theme.Typography
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.logging.Logger
 
@@ -101,9 +105,9 @@ fun MakeGameRow(title: String) {
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: List<String>, achievementDesc: List<String>, title: String, activity: Class<out ComponentActivity>) {
+fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: List<String>, title: String, activity: Class<out ComponentActivity>) {
     val context = LocalContext.current
-    Logger.getLogger("AAAAAAAAAAAAAA").info(achievementNames.toString())
+
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -130,19 +134,33 @@ fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: Li
         Row() {
             var achievementImages by remember { mutableStateOf(mutableListOf(0, 0, 0)) }
             val currUser = Firebase.auth.currentUser?.uid
+
             db.getReference("accounts/${currUser}/achievements").get().addOnSuccessListener { a ->
-                var currAchiv = 1
+                var currAchiv = 0
                 for (achievement in achievementNames) {
                     val newImages = achievementImages.toMutableList()
                     if (a.hasChild(achievement)) {
-                        newImages[currAchiv - 1] = currAchiv + 2
+                        newImages[currAchiv] = currAchiv + 3
                     } else {
-                        newImages[currAchiv - 1] = currAchiv - 1
+                        newImages[currAchiv] = currAchiv
                     }
                     achievementImages = newImages
                     currAchiv += 1
                 }
             }
+
+            val achievementDesc = mutableListOf("", "", "")
+
+            db.getReference("${title.lowercase()}/achievements").get().addOnSuccessListener { a ->
+                var currAchiv = 0
+                for (achivement in a.children) {
+                    achievementDesc[currAchiv] = achivement.child("description").value.toString()
+                    currAchiv += 1
+                }
+            }
+
+
+
             Image(
                 painter = painterResource(id = achievementSrc[achievementImages[0]]),
                 contentDescription = "Achievement icon",
@@ -189,43 +207,49 @@ fun MakeGameColumn(imgSrc : Int, achievementSrc: List<Int>, achievementNames: Li
 @ExperimentalFoundationApi
 fun GameScroll() {
     val images = listOf(
-        R.drawable.game_icon_temp,
+        R.drawable.snake_svgrepo_com,
         R.drawable.game_icon_arkanoid,
         R.drawable.game_icon_minesweeper,
+        R.drawable.sudoku_icon
         R.drawable.flappybird_icon
     )
     val titles = listOf(
         "Snake",
         "Arkanoid",
         "Minesweeper",
+        "Sudoku".
         "FlappyBird"
     )
 
     val achievements = listOf(
-        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
-        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
+        listOf(R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24_not_completed, R.drawable.baseline_star_24, R.drawable.baseline_star_24, R.drawable.baseline_star_24),
+        listOf(R.drawable.arkanoid1_achievement_greyed, R.drawable.arkanoid2_achievement_greyed, R.drawable.arkanoid3_achievement_greyed, R.drawable.arkanoid1_achievement, R.drawable.arkanoid2_achievement, R.drawable.arkanoid3_achievement),
         listOf(R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_not_completed, R.drawable.minesweeper_achievement_1, R.drawable.minesweeper_achievement_2, R.drawable.minesweeper_achievement_3),
+        listOf(R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp, R.drawable.game_icon_temp),
         listOf(R.drawable.flappybird_not_completed, R.drawable.flappybird_not_completed, R.drawable.flappybird_not_completed, R.drawable.flappybird_achievement_1, R.drawable.flappybird_achievement_2, R.drawable.flappybird_achievement_3)
     )
 
     val achievementNames = listOf(
-        listOf("a1", "a2", "a3"),
-        listOf("a1", "a2", "a3"),
+        listOf("snake1", "snake2", "snake3"),
+        listOf("arkanoid1", "arkanoid2", "arkanoid3"),
         listOf("m1", "m2", "m3"),
         listOf("fb1", "fb2", "fb3")
+   
     )
 
     val achievementDesc = listOf(
         listOf("d1", "d2", "d3"),
         listOf("d1", "d2", "d3"),
         listOf("Win a game with at least 10 mines", "Win a game with at least 15 mines", "Win a game with at least 20 mines"),
+        listOf("first_game", "under_10", "under_5"),
         listOf("get 5 points", "get 10 points", "get 15 points")
     )
 
     val classes = listOf(
         SnakeActivity::class.java,
-        ArkanoidActivity::class.java,
+        ArkanoidMenuActivity::class.java,
         ChooseMinesActivity::class.java,
+        DifficultyActivity::class.java
         FlappyBirdActivity::class.java
     )
 
@@ -236,7 +260,6 @@ fun GameScroll() {
             title = titles[page],
             achievementSrc = achievements[page],
             achievementNames = achievementNames[page],
-            achievementDesc = achievementDesc[page],
             activity = classes[page]
         )
     }
