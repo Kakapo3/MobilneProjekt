@@ -210,14 +210,14 @@ fun GameScroll() {
         R.drawable.snake_svgrepo_com,
         R.drawable.game_icon_arkanoid,
         R.drawable.game_icon_minesweeper,
-        R.drawable.sudoku_icon
+        R.drawable.sudoku_icon,
         R.drawable.flappybird_icon
     )
     val titles = listOf(
         "Snake",
         "Arkanoid",
         "Minesweeper",
-        "Sudoku".
+        "Sudoku",
         "FlappyBird"
     )
 
@@ -233,8 +233,8 @@ fun GameScroll() {
         listOf("snake1", "snake2", "snake3"),
         listOf("arkanoid1", "arkanoid2", "arkanoid3"),
         listOf("m1", "m2", "m3"),
-        listOf("fb1", "fb2", "fb3")
-   
+        listOf("fb1", "fb2", "fb3"),
+        listOf("s1", "s2", "s3")
     )
 
     val achievementDesc = listOf(
@@ -249,11 +249,11 @@ fun GameScroll() {
         SnakeActivity::class.java,
         ArkanoidMenuActivity::class.java,
         ChooseMinesActivity::class.java,
-        DifficultyActivity::class.java
+        DifficultyActivity::class.java,
         FlappyBirdActivity::class.java
     )
 
-    HorizontalPager(pageCount = 4
+    HorizontalPager(pageCount = 5
     ) { page ->
         MakeGameColumn(
             imgSrc = images[page],
