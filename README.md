@@ -1,5 +1,7 @@
 # GameHub - projekt na przedmiot Aplikacje Mobilne
 
+![ekran główny](https://ibb.co/N26M9724)
+
 W ramach projektu na przedmiot Aplikacje Mobilne stworzyliśmy platformę GameHub, umożliwiającą umawianie się ze znajomymi i granie w gry wieloosobowe. Wśród dotychczas zaimplementowanych gier są:
 
 - Snake
@@ -10,6 +12,8 @@ W ramach projektu na przedmiot Aplikacje Mobilne stworzyliśmy platformę GameHu
 
 Z powyższych gier tylko snake oferuje rozgrywkę wieloosobową.
 Poza tym, aplikacja umożliwia również dzielenie się zdobytymi osiągnięciami w grach ze znajomymi
+
+
 
 ## Szczegóły techniczne
 
