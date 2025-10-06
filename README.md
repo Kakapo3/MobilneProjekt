@@ -1,6 +1,7 @@
 # GameHub - projekt na przedmiot Aplikacje Mobilne
-
-<a href="https://ibb.co/N26M9724"><img src="https://i.ibb.co/F4bF5n4P/ca34c4f3-3385-45f0-a00a-ccc49478f23c.jpg" alt="ekran główny" border="0" width=200></a>
+<p align="center">
+ <a href="https://ibb.co/N26M9724"><img src="https://i.ibb.co/F4bF5n4P/ca34c4f3-3385-45f0-a00a-ccc49478f23c.jpg" alt="ekran główny" border="0" width=200></a>
+</p>
 
 W ramach projektu na przedmiot Aplikacje Mobilne stworzyliśmy platformę GameHub, umożliwiającą umawianie się ze znajomymi i granie w gry wieloosobowe. Wśród dotychczas zaimplementowanych gier są:
 
